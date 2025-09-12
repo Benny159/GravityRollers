@@ -3,8 +3,8 @@
 Dieses Repository enthält das Unreal Engine 5 Projekt "Gravity Rollers", eine Murmel-Simulation, die im Rahmen der Projektarbeit für Fachinformatiker Anwendungsentwicklung an der Berufsschule Technik in Rostock entwickelt wird.
 
 ## Projektanfroderungen
-[Anforderungsdokument](https://github.com/Benny159/GravatyRollers/blob/main/Documentation/REQUIREMENTS.md)
-[IHK-Standards](https://www.ihk.de/rostock/aus-und-weiterbildung/pruefungen/abschlusspruefung/dokumentation-projektarbeit-2646884)
+* [Anforderungsdokument](https://github.com/Benny159/GravatyRollers/blob/main/Documentation/REQUIREMENTS.md)
+* [IHK-Standards](https://www.ihk.de/rostock/aus-und-weiterbildung/pruefungen/abschlusspruefung/dokumentation-projektarbeit-2646884)
 
 ## 📝 Projektbeschreibung
 
