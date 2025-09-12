@@ -1,118 +1,80 @@
-# Murmel-Simulation (Berufsschulprojekt FIAE 2025)
+# Gravity Rollers - Murmel-Simulation (Berufsschulprojekt FIAE 2025)
 
-Dieses Repository enthält das Unreal Engine 5 Projekt für eine Murmel-Simulation, entwickelt im Rahmen der Projektarbeit für Fachinformatiker Anwendungsentwicklung an der Berufsschule Technik in Rostock.
+Dieses Repository enthält das Unreal Engine 5 Projekt "Gravity Rollers", eine Murmel-Simulation, die im Rahmen der Projektarbeit für Fachinformatiker Anwendungsentwicklung an der Berufsschule Technik in Rostock entwickelt wird.
 
 ## 📝 Projektbeschreibung
 
-Die Anwendung ist eine **zeitabhängige Simulation** einer Murmelbahn. Der Benutzer kann diverse physikalische Parameter von Murmeln konfigurieren und ein Rennen mit mehreren KI-gesteuerten Murmeln auf einer prozedural generierten Strecke starten. Die Anwendung dient dazu, die Auswirkungen verschiedener Eingabeparameter und Zufallsfaktoren auf das Ergebnis eines physikalischen Systems visuell darzustellen und auszuwerten.
+Die Anwendung ist eine **zeitabhängige Simulation** einer Murmelbahn in einem Kinderzimmer-Setting. Der Benutzer kann die physikalischen Parameter für **mehrere Murmeln individuell konfigurieren**, um deren Rennen auf einer prozedural generierten Strecke zu simulieren und die Ergebnisse direkt miteinander zu vergleichen. Die Anwendung dient dazu, die Auswirkungen verschiedener Eingabeparameter und Zufallsfaktoren auf das Ergebnis eines physikalischen Systems visuell darzustellen und auszuwerten.
 
-Das Projekt wurde entwickelt, um alle funktionalen und nicht-funktionalen Anforderungen des Projektauftrags zu erfüllen.
+Das Projekt wird entwickelt, um alle funktionalen und nicht-funktionalen Anforderungen des Projektauftrags zu erfüllen.
 
-## ✨ Features
+## ✨ Kernfeatures
 
-Das Projekt implementiert folgende, im Projektauftrag geforderte Features:
+Das Projekt implementiert die folgenden, im Projektauftrag geforderten Features:
 
-* **5 Eingabeparameter:** Der Benutzer kann vor jeder Simulation mindestens fünf Parameter (z.B. Masse, Reibung, Elastizität) der Murmel einstellen.
-* **3 Zufallsverteilungen:** Die Simulation nutzt mindestens drei verschiedene Zufallsverteilungen, um unvorhersehbare, aber realistische Ereignisse zu modellieren.
-* **Variable Simulationsgeschwindigkeit:** Die Abspielgeschwindigkeit der Simulation kann in mindestens 3 Stufen (z.B. 0.5x, 1.0x, 2.0x) eingestellt werden.
-* **Visuelle Darstellung & Auswertung:** Die Simulation wird in 3D visualisiert. Nach Abschluss eines Rennens werden die Ergebnisse (Zeit, Platzierung) in einer Übersicht dargestellt.
-* **GUI & User Experience:** Die Anwendung verfügt über eine grafische Benutzeroberfläche, die nach den Interaktionsprinzipien der ISO 9241-110 gestaltet wurde.
+* [cite_start]**Physik-Simulation:** Eine realistische, zeitabhängige Simulation, bei der die Zeit gemessen wird, die Murmeln für eine Strecke benötigen[cite: 879].
+* **Mehrfach-Konfiguration:** Anwender können mehrere Murmeln für einen einzigen Simulationslauf anlegen und deren physikalische Eigenschaften individuell einstellen.
+* [cite_start]**Umfassende Eingabeparameter:** Für jede Murmel können **mindestens sieben physikalische Eigenschaften** über eine Benutzeroberfläche eingestellt werden, um deren Verhalten zu beeinflussen[cite: 882]. Dazu gehören unter anderem:
+    * **Größe (`Size`):** Verändert das Volumen und die Kollisionsabfrage der Murmel.
+    * **Masse (`Weight` & `MaterialDensity`):** Beeinflusst die Trägheit und wie die Murmel auf Kräfte reagiert.
+    * **Reibung (`Friction`):** Bestimmt, wie stark die Murmel vom Untergrund abgebremst wird.
+    * **Elastizität (`Restitution`):** Definiert, wie stark die Murmel bei Kollisionen abprallt ("Bounciness").
+    * **Winkeldämpfung (`AngularDamping`):** Steuert, wie schnell die Rotation der Murmel verlangsamt wird.
+    * **Massenverteilung (`MassDistribution`):** Erlaubt eine exzentrische Masseverteilung, die zu einem "Eiern" der Murmel führt.
+    * **Oberflächenrauheit (`SurfaceRoughness`):** Simuliert den Luftwiderstand bzw. die Dämpfung durch die Oberfläche.
+* [cite_start]**Zufallsereignisse:** Die Simulation integriert mindestens drei verschiedene Zufallsverteilungen, um unvorhersehbare Ereignisse zu modellieren[cite: 880, 881]:
+    * **Gleichverteilung:** Für die prozedurale und faire Generierung der Rennstrecke aus einem Pool vordefinierter Segmente.
+    * **Normalverteilung:** Zur Simulation von variablen, leichten Umwelteinflüssen wie "Windstößen", die kontinuierlich auf die Murmeln einwirken.
+    * **Exponentialverteilung:** Steuert die unregelmäßigen Zeitabstände zwischen **seismischen Stößen** (z.B. ein Kind, das am Tisch wackelt). Diese globalen Ereignisse beeinflussen alle Murmeln gleichzeitig durch eine plötzliche Krafteinwirkung und werden durch einen Kamera-Shake visualisiert.
+* [cite_start]**Variable Simulationsgeschwindigkeit:** Die Abspielgeschwindigkeit der Simulation kann in mehreren Stufen (Pause, 0.5x, 1.0x, 2.0x, 4.0x) gesteuert werden, um die Anforderung von mindestens 3 Stufen zu erfüllen[cite: 883].
+* [cite_start]**Visuelle Auswertung:** Nach Abschluss eines Rennens werden die Ergebnisse (Zeit, Platzierung) aller Murmeln in einer grafischen Übersicht dargestellt und in Relation zu den gewählten Startparametern gesetzt[cite: 884].
+* [cite_start]**Intuitive GUI:** Eine grafische Benutzeroberfläche, die nach den Interaktionsprinzipien der **ISO 9241-110** gestaltet ist und einen klaren Anwendungsfluss (Menü → Konfiguration → Auswertung) bietet[cite: 888, 891].
 
-# Anforderungsdokumentation (IHK-Projekt)
+## 🛠️ Technisches Konzept & Architektur
 
-## 1. Funktionale Anforderungen
+Das Projekt wird mit einem Hybrid-Ansatz aus C++ und Blueprints umgesetzt, um Performance und Flexibilität zu kombinieren.
 
-#### Zeitabhängige Simulation
-* Die Kernanwendung misst die Zeit, die Murmeln für eine Strecke benötigen. Diese Zeitdaten bilden die Grundlage für die spätere Auswertung und den Vergleich der Simulationsläufe.
+* **Kernlogik in C++:**
+    * Die `AMarble`-Klasse dient als zentrale Logikeinheit für die Murmeln. Alle physikalischen Eigenschaften sind hier als `UPROPERTY` deklariert, um sie in Blueprints zugänglich zu machen. Die Berechnungen finden in C++ statt, um maximale Performance zu gewährleisten.
+    * Physikalische Materialien werden zur Laufzeit dynamisch in der `CreatePhysicsMaterial()`-Methode erzeugt, um die Parameter (Reibung, Elastizität) direkt anwenden zu können.
+    * Die Generierung der Zufallszahlen für die verschiedenen Verteilungen wird in einer C++ Helper-Klasse gekapselt.
 
-#### Mindestens 3 Zufallswerte mit verschiedenen Verteilungen
-* **Gleichverteilung:** Wird für die prozedurale Generierung der Rennstrecke verwendet, indem zufällig und mit gleicher Wahrscheinlichkeit aus einem Pool von vordefinierten Streckenteilen ausgewählt wird.
-* **Normalverteilung:** Dient der Simulation von Umwelteinflüssen wie "Windstößen". Eine permanent wirkende, normalverteilte Zufallskraft beeinflusst die Murmeln, wobei die meisten Kraftstöße nahe Null liegen. Benötigt auch eine visuelle Darstellung.
-* **Exponentialverteilung:** Steuert die Zeit zwischen den Aktivierungen von dynamischen Hindernissen auf der Strecke (Hammer, Wasser). Dies sorgt für unregelmäßige und schwer vorhersagbare Ereignisse. Ebenfalls visuell darzustellen.
+* **Blueprints & UMG:**
+    * Die gesamte Benutzeroberfläche (UI), inklusive Startmenü, Simulations-HUD und Auswertungsbildschirm, wird mit dem **Unreal Motion Graphics (UMG)** Framework in Blueprints erstellt.
+    * Einzelne Streckensegmente, Hindernisse und visuelle Effekte werden als Actor-Blueprints implementiert, um ein modulares und leicht erweiterbares System zu schaffen.
+    * Die Steuerung des Spielablaufs (z.B. das Starten der Simulation, das Wechseln der Geschwindigkeit) wird über einen Blueprint-basierten `GameMode` gesteuert.
 
-#### Mindestens 5 Eingabeparameter
-* Der Anwender kann vor dem Start über eine UI folgende fünf physikalische Eigenschaften seiner Murmel per Schieberegler einstellen:
-    * **Masse**
-    * **Reibung**
-    * **Elastizität (Bounciness)**
-    * **Größe (Skalierung)**
-    * **Anfangsimpuls**
-    * **mehr austehend**
+* **Performance für Schulrechner:**
+    * [cite_start]Um die Lauffähigkeit auf den Zielsystemen zu garantieren, wird auf **statisches, gebackenes Lighting** gesetzt[cite: 887].
+    * Assets sind bewusst **Low-Poly** gehalten.
+    * Die Physikberechnungen werden durch einfache Kollisionskörper (Spheres, Capsules) optimiert.
 
-#### Variable Simulationsgeschwindigkeit
-* Die Benutzeroberfläche bietet Steuerungselemente, um die globale Simulationsgeschwindigkeit auf folgende Stufen zu setzen:
-    * **Pause (0x)**
-    * **Langsam (0.5x)**
-    * **Normal (1.0x)**
-    * **Schnell (2.0x)**
-    * **Sehr Schnell (4.0x)**
+## 🖱️ UI/UX-Konzept
 
-#### Visuelle Darstellung und Auswertung
-* Die 3D-Simulation wird durch einen eigenen Auswertungsbildschirm nach dem Rennen ergänzt.
-* Dieser Bildschirm zeigt Endzeiten und Platzierungen an und setzt sie in Relation zu den gewählten Startparametern.
-* Zur besseren Visualisierung werden die Daten durch einfache Balkendiagramme (simuliert mit UMG `ProgressBar`-Widgets) dargestellt.
+[cite_start]Die Benutzeroberfläche und das Nutzererlebnis stehen im Fokus und orientieren sich an der **ISO 9241-110**[cite: 891].
 
-#### Kleine, passende Animation
-* Die primäre Animation ist die physikalisch korrekte Roll- und Kollisionsbewegung der Murmeln. 
-* Zusätzliche visuelle Effekte (z.B. Funken bei Kollision, Leuchteffekte bei Boost-Pads) ergänzen die Darstellung.
+* **UI-Fluss:**
+    1.  **Startmenü:** Einfacher Einstiegspunkt zum Starten der Simulation.
+    2.  **Simulations-UI:** Hauptansicht mit einer Top-Down-Perspektive zur Konfiguration der Strecke und der Murmel-Parameter über klar beschriftete Schieberegler. Enthält Steuerungselemente für Start, Pause und Geschwindigkeit.
+    3.  **Auswertungs-UI:** Separater Bildschirm nach dem Rennen zur Anzeige von Zeit und Platzierung, visualisiert durch Balkendiagramme.
 
-#### Windows-Anwendung & .exe-Start
-* Das Projekt wird über die Unreal Engine für die Plattform "Windows" paketiert. 
-* Das Ergebnis ist ein Verzeichnis mit einer MurmelSimulation.exe, die ohne Installation gestartet werden kann.
+* **Kameraführung:**
+    * **Konfigurationsphase:** Eine statische Top-Down-Kamera für den Überblick.
+    * **Simulationsphase:** Eine dynamische Verfolgerkamera, die sich optional auf eine der Murmeln fokussieren kann, oder eine Gesamtansicht der Strecke bietet.
 
-#### Lauffähigkeit auf Schulrechnern
-* Die Performance wird durch gezielte Maßnahmen sichergestellt: C++ für die Kernlogik, statische Beleuchtung (Baked Lighting), Low-Poly-Assets und Optimierung der physikalischen Berechnungen.
+* **Visuelle Effekte:**
+    * [cite_start]Ein **Partikel-Trail** an den Murmeln zur Visualisierung der Geschwindigkeit[cite: 375, 885].
+    * [cite_start]Zusätzliche Effekte bei Kollisionen oder der Aktivierung von Streckenelementen (z.B. Boost-Pads), um dem Nutzer klares Feedback zu geben und die Anforderung einer passenden Animation zu erfüllen[cite: 885, 892].
 
-#### GUI (Grafische Benutzeroberfläche)
-* Der UI-Flow der Anwendung ist klar in drei Bereiche gegliedert:
-    * **1. Startmenü:** Dient als Haupteinstiegspunkt zum Starten der Simulation und ist für zukünftige Erweiterungen (z.B. Speicherstände, Weltenauswahl) vorbereitet.
-    * **2. Simulations-UI:** Die Hauptansicht, in der die Bahn und Murmelparameter konfiguriert werden. Sie enthält auch die Steuerungselemente für die Simulation (Start, Pause, Geschwindigkeit).
-    * **3. Auswertungs-UI:** Ein separater Bildschirm, der nach Abschluss eines Rennens zur detaillierten Anzeige der Ergebnisse dient.
-
-## 2. Nicht-funktionale Anforderungen
-
-#### Clean Code
-* Die Kernlogik des Projekts wird in **C++** nach dem offiziellen Unreal Engine Coding Standard entwickelt.
-* Es wird eine klare Trennung von Logik (C++) und Darstellung/UI (Blueprints/UMG) eingehalten, um die Wartbarkeit und Übersichtlichkeit zu maximieren.
-
-#### UI nach ISO 9241-110
-* Die UI wird nach den sieben Interaktionsprinzipien gestaltet:
-* Aufgabenangemessenheit: Keine überflüssigen Menüs oder Optionen.
-* Selbstbeschreibungsfähigkeit: Alle Regler und Buttons sind klar beschriftet.
-* Steuerbarkeit: Der Nutzer hat jederzeit die Kontrolle über Start, Pause und Geschwindigkeit.
-* Erwartungskonformität: Die UI verhält sich wie erwartet (z.B. Schieberegler).
-* Fehlertoleranz: Falscheingaben werden durch Min/Max-Werte der Regler verhindert.
-* Individualisierbarkeit: Nicht relevant für dieses Projekt.
-* Lernförderlichkeit: Die direkte visuelle Rückmeldung fördert das Verständnis der Parameter.
-
-#### Benutzerfreundliche Animation & Effekte
-* **Kamera:** Es werden unterschiedliche Kamera-Modi für die verschiedenen Spielphasen implementiert (z.B. eine statische Top-Down-Ansicht für die Konfiguration und eine dynamische Verfolgerkamera während des Rennens). Die Kameras werden mit sanften Übergängen und `Camera Lag` für eine angenehme Nutzererfahrung versehen.
-* **Visuelle Effekte:** Ein **Trail-Effekt** (Leuchtspur) an den Murmeln verbessert das Geschwindigkeitsgefühl. Zusätzliche Partikeleffekte werden eingesetzt, um wichtige Ereignisse wie Kollisionen oder die Aktivierung von Boost-Pads visuell hervorzuheben.
-
-## 🛠️ Tech Stack
+## 🚀 Tech Stack
 
 * **Engine:** Unreal Engine 5
 * **Sprache:** C++ / Blueprints (Hybrid-Ansatz)
-    * **C++:** Wird für die Kernsysteme, Datenstrukturen und performanzkritische Logik verwendet.
-    * **Blueprints:** Wird für die Benutzeroberfläche (UMG), einfache Actor-Logik und das Level-Scripting genutzt.
 * **Physik:** Unreal Chaos Physics
-* **Plattform:** Windows (64-bit)
-
-## 🚀 Setup & Installation
-
-Die Anwendung wird als eigenständige **Windows-Anwendung** ausgeliefert und kann über eine `.exe`-Datei gestartet werden.
-
-1.  Laden Sie das neueste Release von der [Releases-Seite](https://github.com/DEIN_BENUTZERNAME/DEIN_REPO/releases) herunter.
-2.  Entpacken Sie die ZIP-Datei.
-3.  Führen Sie die `MurmelSimulation.exe` aus.
-4.  Es ist keine weitere Installation notwendig.
+* [cite_start]**Plattform:** Windows (64-bit) [cite: 886]
 
 ## 📂 Projektmanagement
 
-* **Vorgehensmodell:** Das Projekt folgt dem **Wasserfallmodell**, da die Anforderungen von Beginn an klar und unveränderlich definiert sind.
-* **Dokumentation:** Die vollständige Projektdokumentation nach IHK-Standard wird separat bereitgestellt und ist nicht Teil dieses Repositories.
-* **Benutzerhandbuch:** Ein detailliertes Benutzerhandbuch in deutscher und englischer Sprache wird mit dem finalen Release digital zur Verfügung gestellt.
-
-## 📜 Lizenz
-
-Dieses Projekt steht unter der [MIT License](LICENSE).
+* [cite_start]**Vorgehensmodell:** Das Projekt folgt dem **Wasserfallmodell**, da die Anforderungen von Beginn an klar und unveränderlich definiert sind[cite: 896, 897, 1454].
+* [cite_start]**Abgabetermin:** 06.02.2025 [cite: 913]
+* [cite_start]**Dokumentation:** Die vollständige Projektdokumentation nach IHK-Standard und ein digitales Benutzerhandbuch werden separat erstellt[cite: 894, 895, 902, 1454].
