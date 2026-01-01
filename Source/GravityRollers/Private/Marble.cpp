@@ -1,4 +1,6 @@
 #include "Marble.h"
+#include "MarbleGameMode.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/StaticMeshComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 
@@ -17,6 +19,11 @@ AMarble::AMarble()
 	TrailEffect->SetupAttachment(MarbleMesh);
 	
 	MarbleMesh->SetSimulatePhysics(true);
+
+	bHasFinished = false;
+	bIsEliminated = false;
+	StartingLaneIndex = -1;
+	FinalRaceTime = 0.0f;
 }
 
 void AMarble::BeginPlay()
@@ -58,4 +65,79 @@ UPhysicalMaterial* AMarble::CreatePhysicsMaterial()
 	PhysMat->RestitutionCombineMode = RestitutionCombineMode;
 
 	return PhysMat;
+}
+
+void AMarble::InitializeFromData(const FMarbleData& Data, int32 LaneIndex)
+{
+	Size = Data.Size;
+	Weight = Data.Weight;
+	SurfaceRoughness = Data.SurfaceRoughness;
+	MaterialDensity = Data.MaterialDensity;
+	MassDistribution = Data.MassDistribution;
+	Friction = Data.Friction;
+	Restitution = Data.Restitution;
+	AngularDamping = Data.AngularDamping;
+    
+	StartingLaneIndex = LaneIndex;
+	
+	UpdatePhysicsProperties();
+}
+
+void AMarble::PassCheckpoint(int32 CheckpointIndex, float TimeStamp, float CurrentSpeed)
+{
+	if (bIsEliminated || bHasFinished) return;
+	
+	if (CheckpointTimes.Num() <= CheckpointIndex)
+	{
+		CheckpointTimes.SetNum(CheckpointIndex + 1);
+		CheckpointSpeeds.SetNum(CheckpointIndex + 1);
+	}
+	
+	CheckpointTimes[CheckpointIndex] = TimeStamp;
+	
+	CheckpointSpeeds[CheckpointIndex] = CurrentSpeed;
+    
+	UE_LOG(LogTemp, Log, TEXT("Murmel %s -> Checkpoint %d | Zeit: %.2fs | Speed: %.2f cm/s"), 
+		*GetName(), CheckpointIndex, TimeStamp, CurrentSpeed);
+}
+
+void AMarble::FinishRace(float TimeStamp, float FinishSpeed)
+{
+	if (bHasFinished || bIsEliminated) return;
+
+	bHasFinished = true;
+	FinalRaceTime = TimeStamp;
+	FinalRaceSpeed = FinishSpeed;
+	
+	MarbleMesh->SetLinearDamping(2.0f);
+	MarbleMesh->SetAngularDamping(2.0f);
+
+	UE_LOG(LogTemp, Warning, TEXT("ZIEL! Murmel %s | Zeit: %.2fs | Speed: %.2f cm/s"), 
+		*GetName(), FinalRaceTime, FinalRaceSpeed);
+}
+
+void AMarble::Eliminate()
+{
+	if (bIsEliminated || bHasFinished) return;
+	
+	float CrashSpeed = GetVelocity().Size();
+	
+	float CrashTime = 0.0f;
+	AMarbleGameMode* GM = Cast<AMarbleGameMode>(UGameplayStatics::GetGameMode(this));
+	if (GM) 
+	{
+		CrashTime = GM->GetCurrentRaceTime();
+		GM->RegisterMarbleEliminated();
+	}
+	else 
+	{
+		CrashTime = GetWorld()->GetTimeSeconds(); // Fallback
+	}
+
+	bIsEliminated = true;
+	FinalRaceTime = CrashTime;
+	FinalRaceSpeed = CrashSpeed;
+
+	UE_LOG(LogTemp, Error, TEXT("ELIMINIERT! Murmel %s | Crash-Zeit: %.2fs | Crash-Speed: %.2f cm/s"), 
+		*GetName(), FinalRaceTime, FinalRaceSpeed);
 }

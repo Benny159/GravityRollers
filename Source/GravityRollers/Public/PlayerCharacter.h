@@ -27,7 +27,7 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Movement")
-	float FlySpeed = 600.0f;
+	float FlySpeed = 1800.0f;
 
 	void MoveForward(float Value);
 	void MoveRight(float Value);

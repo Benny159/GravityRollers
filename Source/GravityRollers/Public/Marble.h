@@ -5,6 +5,39 @@
 #include "PhysicalMaterials/PhysicalMaterial.h"
 #include "Marble.generated.h"
 
+USTRUCT(BlueprintType)
+struct FMarbleData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString MarbleName = "Marble";
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Size = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Weight = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float SurfaceRoughness = 0.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float MaterialDensity = 1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FVector MassDistribution = FVector::ZeroVector;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Friction = 0.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Restitution = 0.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float AngularDamping = 0.5f;
+};
+
 UCLASS()
 class GRAVITYROLLERS_API AMarble : public AActor
 {
@@ -27,6 +60,27 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	UParticleSystemComponent* TrailEffect;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race Stats")
+	int32 StartingLaneIndex;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race Stats")
+	bool bHasFinished;
+    
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race Stats")
+	bool bIsEliminated;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race Stats")
+	float FinalRaceTime;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race Stats")
+	float FinalRaceSpeed;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race Stats")
+	TArray<float> CheckpointTimes;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race Stats")
+	TArray<float> CheckpointSpeeds;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CostumPhysics")
 	float Size = 1.0f;
@@ -60,9 +114,17 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CostumPhysics")
 	TEnumAsByte<EFrictionCombineMode::Type> RestitutionCombineMode = EFrictionCombineMode::Max;
-
 	
 	void UpdatePhysicsProperties();
 	UPhysicalMaterial* CreatePhysicsMaterial();
-	// void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
+	UFUNCTION(BlueprintCallable, Category="Configuration")
+	void InitializeFromData(const FMarbleData& Data, int32 LaneIndex);
+	
+	void PassCheckpoint(int32 CheckpointIndex, float TimeStamp, float CurrentSpeed);
+	
+	void FinishRace(float TimeStamp, float FinishSpeed);
+	
+	UFUNCTION(BlueprintCallable, Category="Race Logic")
+	void Eliminate();
 };
