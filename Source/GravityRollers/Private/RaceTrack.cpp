@@ -1,6 +1,7 @@
 #include "RaceTrack.h"
 #include "MarbleGameMode.h"
 #include "Kismet/GameplayStatics.h"
+#include "MarblePlayerController.h"
 
 ARaceTrack::ARaceTrack()
 {
@@ -94,6 +95,8 @@ void ARaceTrack::SpawnMarble(TSubclassOf<AMarble> MarbleClass, int32 LaneIndex, 
     if (NewMarble)
     {
         NewMarble->InitializeFromData(MarbleData, LaneIndex);
+
+        NewMarble->Tags.Add(FName("RaceMarble"));
         
         ActiveMarbles.Add(NewMarble);
     }
@@ -105,6 +108,13 @@ void ARaceTrack::StartRace()
     bRaceStarted = true;
     
     StartBarrier->SetRelativeRotation(FRotator(0.f, 90.f, 0.f));
+
+    AMarblePlayerController* PC = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());
+    if (PC)
+    {
+        PC->SetRaceState(true);
+        PC->FocusOnMarble(0); 
+    }
     
     AMarbleGameMode* GM = Cast<AMarbleGameMode>(UGameplayStatics::GetGameMode(this));
     if (GM)
@@ -116,6 +126,13 @@ void ARaceTrack::StartRace()
 void ARaceTrack::ResetTrack()
 {
     bRaceStarted = false;
+
+    AMarblePlayerController* PC = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());
+    if (PC)
+    {
+        PC->SetRaceState(false);
+        PC->SwitchToConfigView();
+    }
     
     for (AMarble* Marble : ActiveMarbles)
     {
@@ -127,6 +144,12 @@ void ARaceTrack::ResetTrack()
     ActiveMarbles.Empty();
     
     StartBarrier->SetRelativeRotation(FRotator::ZeroRotator);
+
+    AMarbleGameMode* GM = Cast<AMarbleGameMode>(UGameplayStatics::GetGameMode(this));
+    if (GM)
+    {
+        GM->ResetRaceState();
+    }
 
     UE_LOG(LogTemp, Log, TEXT("RaceTrack zurückgesetzt."));
 }

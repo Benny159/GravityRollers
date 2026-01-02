@@ -1,7 +1,9 @@
 #include "Marble.h"
 #include "MarbleGameMode.h"
+#include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/StaticMeshComponent.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "Particles/ParticleSystemComponent.h"
 
 AMarble::AMarble()
@@ -10,6 +12,7 @@ AMarble::AMarble()
 	
 	MarbleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MarbleMesh"));
 	RootComponent = MarbleMesh;
+	MarbleMesh->SetSimulatePhysics(true);
 	
 	InnerCore = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("InnerCore"));
 	InnerCore->SetupAttachment(MarbleMesh);
@@ -18,12 +21,24 @@ AMarble::AMarble()
 	TrailEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("TrailEffect"));
 	TrailEffect->SetupAttachment(MarbleMesh);
 	
-	MarbleMesh->SetSimulatePhysics(true);
+	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+	CameraBoom->SetupAttachment(RootComponent);
+	CameraBoom->SetUsingAbsoluteRotation(true); 
+    
+	CameraBoom->TargetArmLength = 500.0f; // Abstand
+	CameraBoom->SetRelativeRotation(FRotator(-30.f, 0.f, 0.f)); // Blickwinkel von oben
+	CameraBoom->bDoCollisionTest = false; // Kein Zittern bei Bodenkontakt
+
+	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
+	FollowCamera->bUsePawnControlRotation = false;
 
 	bHasFinished = false;
 	bIsEliminated = false;
 	StartingLaneIndex = -1;
 	FinalRaceTime = 0.0f;
+	FinalRaceSpeed = 0.0f;
+	
 }
 
 void AMarble::BeginPlay()
@@ -36,6 +51,18 @@ void AMarble::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (CameraBoom)
+	{
+		CameraBoom->SetWorldLocation(GetActorLocation());
+	}
+}
+
+void AMarble::SetFrozen(bool bFrozen)
+{
+	if (MarbleMesh)
+	{
+		MarbleMesh->SetSimulatePhysics(!bFrozen);
+	}
 }
 
 void AMarble::UpdatePhysicsProperties()
@@ -81,6 +108,12 @@ void AMarble::InitializeFromData(const FMarbleData& Data, int32 LaneIndex)
 	StartingLaneIndex = LaneIndex;
 	
 	UpdatePhysicsProperties();
+
+	UMaterialInstanceDynamic* DynMat = MarbleMesh->CreateAndSetMaterialInstanceDynamic(0);
+	if(DynMat)
+	{
+		DynMat->SetVectorParameterValue(TEXT("BaseColor"), Data.MarbleColor);
+	}
 }
 
 void AMarble::PassCheckpoint(int32 CheckpointIndex, float TimeStamp, float CurrentSpeed)
@@ -94,7 +127,6 @@ void AMarble::PassCheckpoint(int32 CheckpointIndex, float TimeStamp, float Curre
 	}
 	
 	CheckpointTimes[CheckpointIndex] = TimeStamp;
-	
 	CheckpointSpeeds[CheckpointIndex] = CurrentSpeed;
     
 	UE_LOG(LogTemp, Log, TEXT("Murmel %s -> Checkpoint %d | Zeit: %.2fs | Speed: %.2f cm/s"), 
@@ -121,7 +153,6 @@ void AMarble::Eliminate()
 	if (bIsEliminated || bHasFinished) return;
 	
 	float CrashSpeed = GetVelocity().Size();
-	
 	float CrashTime = 0.0f;
 	AMarbleGameMode* GM = Cast<AMarbleGameMode>(UGameplayStatics::GetGameMode(this));
 	if (GM) 
@@ -131,7 +162,7 @@ void AMarble::Eliminate()
 	}
 	else 
 	{
-		CrashTime = GetWorld()->GetTimeSeconds(); // Fallback
+		CrashTime = GetWorld()->GetTimeSeconds();
 	}
 
 	bIsEliminated = true;

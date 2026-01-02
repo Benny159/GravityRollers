@@ -36,6 +36,9 @@ struct FMarbleData
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float AngularDamping = 0.5f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FLinearColor MarbleColor = FLinearColor::White;
 };
 
 UCLASS()
@@ -60,6 +63,12 @@ public:
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	UParticleSystemComponent* TrailEffect;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+	USpringArmComponent* CameraBoom;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+	UCameraComponent* FollowCamera;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race Stats")
 	int32 StartingLaneIndex;
@@ -120,6 +129,9 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Configuration")
 	void InitializeFromData(const FMarbleData& Data, int32 LaneIndex);
+
+	UFUNCTION(BlueprintCallable, Category="Race Logic")
+	void SetFrozen(bool bFrozen);
 	
 	void PassCheckpoint(int32 CheckpointIndex, float TimeStamp, float CurrentSpeed);
 	
