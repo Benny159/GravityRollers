@@ -73,7 +73,7 @@ void AMarblePlayerController::SwitchToConfigView()
     AActor* ConfigCam = FindCameraByTag(FName("ConfigCam"));
     if (ConfigCam)
     {
-        SetViewTargetWithBlend(ConfigCam, 1.0f, EViewTargetBlendFunction::VTBlend_EaseInOut, 2.0f);
+        SetViewTargetWithBlend(ConfigCam, 2.0f, EViewTargetBlendFunction::VTBlend_EaseInOut, 2.0f);
     }
 }
 
