@@ -25,9 +25,9 @@ AMarble::AMarble()
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->SetUsingAbsoluteRotation(true); 
     
-	CameraBoom->TargetArmLength = 500.0f; // Abstand
-	CameraBoom->SetRelativeRotation(FRotator(-30.f, 0.f, 0.f)); // Blickwinkel von oben
-	CameraBoom->bDoCollisionTest = false; // Kein Zittern bei Bodenkontakt
+	CameraBoom->TargetArmLength = 500.0f;
+	CameraBoom->SetRelativeRotation(FRotator(-30.f, 0.f, 0.f));
+	CameraBoom->bDoCollisionTest = false;
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);

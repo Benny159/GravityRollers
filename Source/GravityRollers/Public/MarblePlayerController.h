@@ -15,6 +15,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void SetupInputComponent() override;
+
 public:
 	UFUNCTION(BlueprintCallable, Category = "Camera Control")
 	void SwitchToRaceView();
@@ -33,6 +35,16 @@ public:
 
 private:
 	bool bRaceIsActive;
+
+	int32 CurrentViewIndex;
     
 	AActor* FindCameraByTag(FName Tag);
+
+	void ViewMarble1();
+	void ViewMarble2();
+	void ViewMarble3();
+	void ViewMarble4();
+	void ViewMarble5();
+
+	void CycleToNextMarble();
 };

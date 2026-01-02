@@ -3,6 +3,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
 #include "Marble.generated.h"
 
 USTRUCT(BlueprintType)

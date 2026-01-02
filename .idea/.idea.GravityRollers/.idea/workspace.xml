@@ -14,10 +14,10 @@
   <component name="ChangeListManager">
     <list default="true" id="cffe6fa6-6a99-4fc2-acda-cadbe9bca3df" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GravityRollers/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GravityRollers/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Level/Kidsroom.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Level/Kidsroom.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Config/DefaultInput.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultInput.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/StarterContent/Materials/M_Wood_Floor_Walnut_Polished.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/StarterContent/Materials/M_Wood_Floor_Walnut_Polished.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Private/Marble.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Private/Marble.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Private/MarblePlayerController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Private/MarblePlayerController.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Private/RaceTrack.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Private/RaceTrack.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Public/Marble.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Public/Marble.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Public/MarblePlayerController.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Public/MarblePlayerController.h" afterDir="false" />
     </list>
@@ -194,7 +194,7 @@
       <workItem from="1756918545667" duration="260000" />
       <workItem from="1767112240850" duration="1221000" />
       <workItem from="1767274644107" duration="7066000" />
-      <workItem from="1767353885954" duration="6808000" />
+      <workItem from="1767353885954" duration="8859000" />
     </task>
     <task id="LOCAL-00001" summary="[IMP]Logic for Checkpoints">
       <option name="closed" value="true" />

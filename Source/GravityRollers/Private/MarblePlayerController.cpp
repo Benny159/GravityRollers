@@ -9,6 +9,7 @@ AMarblePlayerController::AMarblePlayerController()
     bEnableClickEvents = true;
     bEnableMouseOverEvents = true;
     bRaceIsActive = false;
+    CurrentViewIndex = -1;
 }
 
 void AMarblePlayerController::BeginPlay()
@@ -16,6 +17,41 @@ void AMarblePlayerController::BeginPlay()
     Super::BeginPlay();
     SwitchToConfigView();
 }
+
+void AMarblePlayerController::SetupInputComponent()
+{
+    Super::SetupInputComponent();
+    
+    if (InputComponent)
+    {
+        InputComponent->BindAction("ViewMarble1", IE_Pressed, this, &AMarblePlayerController::ViewMarble1);
+        InputComponent->BindAction("ViewMarble2", IE_Pressed, this, &AMarblePlayerController::ViewMarble2);
+        InputComponent->BindAction("ViewMarble3", IE_Pressed, this, &AMarblePlayerController::ViewMarble3);
+        InputComponent->BindAction("ViewMarble4", IE_Pressed, this, &AMarblePlayerController::ViewMarble4);
+        InputComponent->BindAction("ViewMarble5", IE_Pressed, this, &AMarblePlayerController::ViewMarble5);
+
+        InputComponent->BindAction("NextMarble", IE_Pressed, this, &AMarblePlayerController::CycleToNextMarble);
+    }
+}
+
+void AMarblePlayerController::CycleToNextMarble()
+{
+    if (!bRaceIsActive) return;
+    
+    TArray<AActor*> FoundMarbles;
+    UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("RaceMarble"), FoundMarbles);
+
+    if (FoundMarbles.Num() == 0) return;
+    
+    CurrentViewIndex = (CurrentViewIndex + 1) % FoundMarbles.Num(); 
+    FocusOnMarble(CurrentViewIndex);
+}
+
+void AMarblePlayerController::ViewMarble1() { FocusOnMarble(0); CurrentViewIndex = 0; }
+void AMarblePlayerController::ViewMarble2() { FocusOnMarble(1); CurrentViewIndex = 1; }
+void AMarblePlayerController::ViewMarble3() { FocusOnMarble(2); CurrentViewIndex = 2; }
+void AMarblePlayerController::ViewMarble4() { FocusOnMarble(3); CurrentViewIndex = 3; }
+void AMarblePlayerController::ViewMarble5() { FocusOnMarble(4); CurrentViewIndex = 4; }
 
 void AMarblePlayerController::SetRaceState(bool bActive)
 {
