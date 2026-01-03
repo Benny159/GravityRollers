@@ -35,4 +35,7 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "Race Logic")
     TArray<FMarbleData> GetAllMarbleData();
+
+    UFUNCTION(BlueprintCallable, Category = "Logic")
+    void SwapLaneAssignments(AMarble* TargetMarble, int32 DesiredLaneIndex);
 };

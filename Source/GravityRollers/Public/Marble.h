@@ -40,6 +40,9 @@ struct FMarbleData
 	float AngularDamping = 0.5f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 PreferredLaneIndex = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FLinearColor MarbleColor = FLinearColor::White;
 };
 
@@ -140,7 +143,7 @@ public:
 	UPhysicalMaterial* CreatePhysicsMaterial();
 
 	UFUNCTION(BlueprintCallable, Category="Configuration")
-	void InitializeFromData(const FMarbleData& Data, int32 LaneIndex);
+	void InitializeFromData(const FMarbleData& Data);
 
 	UFUNCTION(BlueprintCallable, Category="Race Logic")
 	void SetFrozen(bool bFrozen);

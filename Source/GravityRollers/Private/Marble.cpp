@@ -107,6 +107,7 @@ FMarbleData AMarble::GetMarbleData() const
 	Data.Friction = Friction;
 	Data.Restitution = Restitution;
 	Data.AngularDamping = AngularDamping;
+	Data.PreferredLaneIndex = StartingLaneIndex;
 
 	return Data;
 }
@@ -148,7 +149,7 @@ UPhysicalMaterial* AMarble::CreatePhysicsMaterial()
 	return PhysMat;
 }
 
-void AMarble::InitializeFromData(const FMarbleData& Data, int32 LaneIndex)
+void AMarble::InitializeFromData(const FMarbleData& Data)
 {
 	Size = Data.Size;
 	Weight = Data.Weight;
@@ -158,16 +159,9 @@ void AMarble::InitializeFromData(const FMarbleData& Data, int32 LaneIndex)
 	Friction = Data.Friction;
 	Restitution = Data.Restitution;
 	AngularDamping = Data.AngularDamping;
-    
-	StartingLaneIndex = LaneIndex;
+	StartingLaneIndex = Data.PreferredLaneIndex;
 	
 	UpdatePhysicsProperties();
-
-	UMaterialInstanceDynamic* DynMat = MarbleMesh->CreateAndSetMaterialInstanceDynamic(0);
-	if(DynMat)
-	{
-		DynMat->SetVectorParameterValue(TEXT("BaseColor"), Data.MarbleColor);
-	}
 }
 
 void AMarble::PassCheckpoint(int32 CheckpointIndex, float TimeStamp, float CurrentSpeed)

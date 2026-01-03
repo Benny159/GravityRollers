@@ -94,12 +94,32 @@ void ARaceTrack::SpawnMarble(TSubclassOf<AMarble> MarbleClass, int32 LaneIndex, 
     
     if (NewMarble)
     {
-        NewMarble->InitializeFromData(MarbleData, LaneIndex);
+        NewMarble->InitializeFromData(MarbleData);
 
         NewMarble->Tags.Add(FName("RaceMarble"));
         
         ActiveMarbles.Add(NewMarble);
     }
+}
+
+void ARaceTrack::SetupRaceFromData(const TArray<FMarbleData>& MarblesData)
+{
+    ResetTrack();
+
+    for (const FMarbleData& Data : MarblesData)
+    {
+        int32 TargetLane = Data.PreferredLaneIndex;
+        
+        if (StartPositions.IsValidIndex(TargetLane))
+        {
+            SpawnMarble(RaceMarbleClass, TargetLane, Data); 
+        }
+        else
+        {
+            UE_LOG(LogTemp, Warning, TEXT("Ungültiger LaneIndex in Daten: %d"), TargetLane);
+        }
+    }
+    // Optional: Hier könnte man die Kamera initialisieren
 }
 
 void ARaceTrack::StartRace()

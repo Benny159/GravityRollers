@@ -62,6 +62,35 @@ void AMarbleWorkbench::BeginPlay()
     }
 }
 
+void AMarbleWorkbench::SwapLaneAssignments(AMarble* TargetMarble, int32 DesiredLaneIndex)
+{
+    if (!TargetMarble || DesiredLaneIndex < 0 || DesiredLaneIndex > 4) return;
+    
+    int32 OldLaneIndex = TargetMarble->StartingLaneIndex;
+    
+    if (OldLaneIndex == DesiredLaneIndex) return;
+    AMarble* ConflictingMarble = nullptr;
+
+    for (AMarble* M : ConfigMarbles)
+    {
+        if (M && M != TargetMarble && M->StartingLaneIndex == DesiredLaneIndex)
+        {
+            ConflictingMarble = M;
+            break;
+        }
+    }
+    
+    TargetMarble->StartingLaneIndex = DesiredLaneIndex;
+    
+    if (ConflictingMarble)
+    {
+        ConflictingMarble->StartingLaneIndex = OldLaneIndex;
+        UE_LOG(LogTemp, Log, TEXT("Bahn getauscht: %s ist jetzt Bahn %d, %s ist jetzt Bahn %d"), 
+            *TargetMarble->GetName(), DesiredLaneIndex + 1, 
+            *ConflictingMarble->GetName(), OldLaneIndex + 1);
+    }
+}
+
 TArray<FMarbleData> AMarbleWorkbench::GetAllMarbleData()
 {
     TArray<FMarbleData> AllData;

@@ -34,6 +34,9 @@ public:
     
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Start System")
     TArray<UArrowComponent*> StartPositions;
+
+    UPROPERTY(EditAnywhere, Category = "Start System")
+    TSubclassOf<AMarble> RaceMarbleClass;
     
     UFUNCTION(BlueprintCallable, Category = "Race Logic")
     void StartRace();
@@ -43,6 +46,9 @@ public:
     
     UFUNCTION(BlueprintCallable, Category = "Race Logic")
     void ResetTrack();
+
+    UFUNCTION(BlueprintCallable, Category = "Race Control")
+    void SetupRaceFromData(const TArray<FMarbleData>& MarblesData);
 
 private:
     UPROPERTY()

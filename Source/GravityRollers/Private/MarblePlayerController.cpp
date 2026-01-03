@@ -23,20 +23,23 @@ void AMarblePlayerController::SelectMarble(AMarble* NewMarble)
 {
     if (CurrentSelectedMarble == NewMarble)
     {
-        NewMarble->SetSelected(false);
+        if (CurrentSelectedMarble)
+        {
+            CurrentSelectedMarble->SetSelected(false);
+        }
         
         CurrentSelectedMarble = nullptr;
-
-        UE_LOG(LogTemp, Log, TEXT("Murmel abgewählt: %s"), *NewMarble->GetName());
         
-        // Optional: Hier Widget schließen!
-        // if (MyConfigWidget) MyConfigWidget->RemoveFromParent();
+        OnHideMarbleUI(); 
         
         return;
     }
+    
     if (CurrentSelectedMarble)
     {
         CurrentSelectedMarble->SetSelected(false);
+        
+        OnHideMarbleUI(); 
     }
     
     CurrentSelectedMarble = NewMarble;
@@ -44,9 +47,10 @@ void AMarblePlayerController::SelectMarble(AMarble* NewMarble)
     if (CurrentSelectedMarble)
     {
         CurrentSelectedMarble->SetSelected(true);
-        UE_LOG(LogTemp, Log, TEXT("Neue Murmel selektiert: %s"), *CurrentSelectedMarble->GetName());
         
-        // HIER SPÄTER: Widget öffnen und aktualisieren!
+        OnShowMarbleUI(CurrentSelectedMarble); 
+        
+        UE_LOG(LogTemp, Log, TEXT("UI angefordert für: %s"), *CurrentSelectedMarble->GetName());
     }
 }
 

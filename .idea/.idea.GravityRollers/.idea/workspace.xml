@@ -14,11 +14,19 @@
   <component name="ChangeListManager">
     <list default="true" id="cffe6fa6-6a99-4fc2-acda-cadbe9bca3df" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GravityRollers/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GravityRollers/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_MarbleGameMode.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_MarbleGameMode.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_MarbleWorkbench.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_MarbleWorkbench.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_RaceTrack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_RaceTrack.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Level/Kidsroom.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Level/Kidsroom.umap" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/UI/WBP_MarbleModifier.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/UI/WBP_MarbleModifier.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Private/Marble.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Private/Marble.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Private/MarblePlayerController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Private/MarblePlayerController.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Private/MarbleWorkbench.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Private/MarbleWorkbench.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Private/RaceTrack.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Private/RaceTrack.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Public/Marble.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Public/Marble.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Public/MarblePlayerController.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Public/MarblePlayerController.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Public/MarbleWorkbench.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Public/MarbleWorkbench.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Public/RaceTrack.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Public/RaceTrack.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -194,7 +202,7 @@
       <workItem from="1767112240850" duration="1221000" />
       <workItem from="1767274644107" duration="7066000" />
       <workItem from="1767353885954" duration="9663000" />
-      <workItem from="1767441385234" duration="3831000" />
+      <workItem from="1767441385234" duration="16214000" />
     </task>
     <task id="LOCAL-00001" summary="[IMP]Logic for Checkpoints">
       <option name="closed" value="true" />

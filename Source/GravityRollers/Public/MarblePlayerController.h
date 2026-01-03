@@ -39,6 +39,12 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	AMarble* CurrentSelectedMarble;
 
+	UFUNCTION(BlueprintImplementableEvent, Category = "UI")
+	void OnShowMarbleUI(AMarble* Marble);
+	
+	UFUNCTION(BlueprintImplementableEvent, Category = "UI")
+	void OnHideMarbleUI();
+
 private:
 	bool bRaceIsActive;
 
