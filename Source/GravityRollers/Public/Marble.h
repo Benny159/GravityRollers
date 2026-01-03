@@ -19,7 +19,7 @@ struct FMarbleData
 	float Size = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float Weight = 1.0f;
+	float Weight = 100.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float SurfaceRoughness = 0.5f;
@@ -110,7 +110,7 @@ public:
 	float Size = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CostumPhysics")
-	float Weight = 1.0f;
+	float Weight = 100.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CostumPhysics")
 	float SurfaceRoughness = 0.5f;
@@ -125,13 +125,13 @@ public:
 	float Mass = 1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CostumPhysics")
-	float Friction = 2.0f;
+	float Friction = 0.5f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CostumPhysics")
-	float Restitution = 0.8f;
+	float Restitution = 0.5f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CostumPhysics")
-	float AngularDamping = 10.0f;
+	float AngularDamping = 0.5f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CostumPhysics")
 	TEnumAsByte<EFrictionCombineMode::Type> FrictionCombineMode = EFrictionCombineMode::Min;
