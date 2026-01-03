@@ -91,13 +91,16 @@ void AMarbleWorkbench::SwapLaneAssignments(AMarble* TargetMarble, int32 DesiredL
     }
 }
 
-TArray<FMarbleData> AMarbleWorkbench::GetAllMarbleData()
+TArray<FMarbleData> AMarbleWorkbench::GetAllMarbleData() const
 {
     TArray<FMarbleData> AllData;
     for (AMarble* Marble : ConfigMarbles)
     {
-        if (Marble) AllData.Add(Marble->GetMarbleData());
-        else AllData.Add(FMarbleData());
+        if (Marble)
+        {
+            // Hier wird auch der StartingLaneIndex in das Struct kopiert!
+            AllData.Add(Marble->GetMarbleData());
+        }
     }
     return AllData;
 }

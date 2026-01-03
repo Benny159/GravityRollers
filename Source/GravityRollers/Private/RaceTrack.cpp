@@ -78,26 +78,21 @@ void ARaceTrack::RegisterCheckpoints()
 
 void ARaceTrack::SpawnMarble(TSubclassOf<AMarble> MarbleClass, int32 LaneIndex, const FMarbleData& MarbleData)
 {
-    if (!MarbleClass || !StartPositions.IsValidIndex(LaneIndex)) 
-    {
-        UE_LOG(LogTemp, Error, TEXT("SpawnMarble: Ungültige Klasse oder Index!"));
-        return;
-    }
-
+    if (!MarbleClass || !StartPositions.IsValidIndex(LaneIndex)) return;
 
     FTransform SpawnTransform = StartPositions[LaneIndex]->GetComponentTransform();
-    
     FActorSpawnParameters SpawnParams;
-    SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-    
+    SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+
     AMarble* NewMarble = GetWorld()->SpawnActor<AMarble>(MarbleClass, SpawnTransform, SpawnParams);
-    
+
     if (NewMarble)
     {
         NewMarble->InitializeFromData(MarbleData);
-
         NewMarble->Tags.Add(FName("RaceMarble"));
         
+        NewMarble->SetFrozen(true); 
+
         ActiveMarbles.Add(NewMarble);
     }
 }
@@ -127,7 +122,15 @@ void ARaceTrack::StartRace()
     if (bRaceStarted) return;
     bRaceStarted = true;
     
-    StartBarrier->SetRelativeRotation(FRotator(0.f, 90.f, 0.f));
+    StartBarrier->SetRelativeRotation(FRotator(80.f, 0.f, 0.f));
+
+    for (AMarble* Marble : ActiveMarbles)
+    {
+        if (Marble)
+        {
+            Marble->SetFrozen(false);
+        }
+    }
 
     AMarblePlayerController* PC = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());
     if (PC)

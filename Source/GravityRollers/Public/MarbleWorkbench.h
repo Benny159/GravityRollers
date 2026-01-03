@@ -33,8 +33,8 @@ public:
     UPROPERTY(BlueprintReadOnly, Category = "Workbench Runtime")
     TArray<AMarble*> ConfigMarbles;
 
-    UFUNCTION(BlueprintCallable, Category = "Race Logic")
-    TArray<FMarbleData> GetAllMarbleData();
+    UFUNCTION(BlueprintCallable, Category = "Data")
+    TArray<FMarbleData> GetAllMarbleData() const;
 
     UFUNCTION(BlueprintCallable, Category = "Logic")
     void SwapLaneAssignments(AMarble* TargetMarble, int32 DesiredLaneIndex);
