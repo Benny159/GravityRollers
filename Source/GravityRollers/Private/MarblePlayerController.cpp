@@ -10,12 +10,44 @@ AMarblePlayerController::AMarblePlayerController()
     bEnableMouseOverEvents = true;
     bRaceIsActive = false;
     CurrentViewIndex = -1;
+    CurrentSelectedMarble = nullptr;
 }
 
 void AMarblePlayerController::BeginPlay()
 {
     Super::BeginPlay();
     SwitchToConfigView();
+}
+
+void AMarblePlayerController::SelectMarble(AMarble* NewMarble)
+{
+    if (CurrentSelectedMarble == NewMarble)
+    {
+        NewMarble->SetSelected(false);
+        
+        CurrentSelectedMarble = nullptr;
+
+        UE_LOG(LogTemp, Log, TEXT("Murmel abgewählt: %s"), *NewMarble->GetName());
+        
+        // Optional: Hier Widget schließen!
+        // if (MyConfigWidget) MyConfigWidget->RemoveFromParent();
+        
+        return;
+    }
+    if (CurrentSelectedMarble)
+    {
+        CurrentSelectedMarble->SetSelected(false);
+    }
+    
+    CurrentSelectedMarble = NewMarble;
+    
+    if (CurrentSelectedMarble)
+    {
+        CurrentSelectedMarble->SetSelected(true);
+        UE_LOG(LogTemp, Log, TEXT("Neue Murmel selektiert: %s"), *CurrentSelectedMarble->GetName());
+        
+        // HIER SPÄTER: Widget öffnen und aktualisieren!
+    }
 }
 
 void AMarblePlayerController::SetupInputComponent()

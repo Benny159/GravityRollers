@@ -1,5 +1,6 @@
 #include "Marble.h"
 #include "MarbleGameMode.h"
+#include "MarblePlayerController.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/StaticMeshComponent.h"
@@ -9,6 +10,7 @@
 AMarble::AMarble()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bIsSelected = false;
 	
 	MarbleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MarbleMesh"));
 	RootComponent = MarbleMesh;
@@ -25,7 +27,7 @@ AMarble::AMarble()
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->SetUsingAbsoluteRotation(true); 
     
-	CameraBoom->TargetArmLength = 500.0f;
+	CameraBoom->TargetArmLength = 1500.0f;
 	CameraBoom->SetRelativeRotation(FRotator(-30.f, 0.f, 0.f));
 	CameraBoom->bDoCollisionTest = false;
 
@@ -44,6 +46,7 @@ AMarble::AMarble()
 void AMarble::BeginPlay()
 {
 	Super::BeginPlay();
+	InitialLocation = GetActorLocation();
 	UpdatePhysicsProperties();
 }
 
@@ -55,6 +58,57 @@ void AMarble::Tick(float DeltaTime)
 	{
 		CameraBoom->SetWorldLocation(GetActorLocation());
 	}
+	if (!MarbleMesh->IsSimulatingPhysics()) 
+	{
+		UpdateSelectionVisuals(DeltaTime);
+	}
+}
+
+void AMarble::NotifyActorOnClicked(FKey ButtonPressed)
+{
+	Super::NotifyActorOnClicked(ButtonPressed);
+	
+	if (MarbleMesh->IsSimulatingPhysics()) return;
+	
+	AMarblePlayerController* PC = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());
+	if (PC)
+	{
+		PC->SelectMarble(this);
+	}
+}
+
+void AMarble::SetSelected(bool bSelected)
+{
+	bIsSelected = bSelected;
+	// (Optional: Hier Material Glow an/aus)
+}
+
+void AMarble::UpdateSelectionVisuals(float DeltaTime)
+{
+	FVector TargetLoc = InitialLocation;
+	if (bIsSelected)
+	{
+		TargetLoc = InitialLocation + FVector(0, 0, 150.0f);
+	}
+	
+	FVector NewLoc = FMath::VInterpTo(GetActorLocation(), TargetLoc, DeltaTime, 10.0f);
+	SetActorLocation(NewLoc);
+}
+
+FMarbleData AMarble::GetMarbleData() const
+{
+	FMarbleData Data;
+	Data.MarbleName = GetName();
+	Data.Size = Size;
+	Data.Weight = Weight;
+	Data.SurfaceRoughness = SurfaceRoughness;
+	Data.MaterialDensity = MaterialDensity;
+	Data.MassDistribution = MassDistribution;
+	Data.Friction = Friction;
+	Data.Restitution = Restitution;
+	Data.AngularDamping = AngularDamping;
+
+	return Data;
 }
 
 void AMarble::SetFrozen(bool bFrozen)

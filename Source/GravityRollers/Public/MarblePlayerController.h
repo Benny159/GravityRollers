@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "Marble.h"
 #include "MarblePlayerController.generated.h"
 
 UCLASS()
@@ -32,6 +33,11 @@ public:
 	
 	UFUNCTION(BlueprintPure, Category = "Game State")
 	bool IsRaceActive() const { return bRaceIsActive; }
+
+	void SelectMarble(AMarble* NewMarble);
+	
+	UPROPERTY(BlueprintReadOnly)
+	AMarble* CurrentSelectedMarble;
 
 private:
 	bool bRaceIsActive;

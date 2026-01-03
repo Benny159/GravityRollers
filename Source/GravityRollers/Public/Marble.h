@@ -56,6 +56,16 @@ protected:
 
 public:	
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void NotifyActorOnClicked(FKey ButtonPressed = EKeys::LeftMouseButton) override;
+	
+	UFUNCTION(BlueprintCallable)
+	FMarbleData GetMarbleData() const;
+	
+	bool bIsSelected;
+	FVector InitialLocation;
+	void UpdateSelectionVisuals(float DeltaTime);
+	void SetSelected(bool bSelected);
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	UStaticMeshComponent* MarbleMesh;
