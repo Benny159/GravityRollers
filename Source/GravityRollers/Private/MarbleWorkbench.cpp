@@ -56,6 +56,8 @@ void AMarbleWorkbench::BeginPlay()
                     NewMarble->MarbleMesh->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
                 }
 
+                NewMarble->Tags.Add(FName("ConfigMarble"));
+
                 ConfigMarbles.Add(NewMarble);
             }
         }

@@ -24,7 +24,7 @@ public:
     UStaticMeshComponent* TrackMesh;
     
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Track")
-    UStaticMeshComponent* StartBarrier;
+    UStaticMeshComponent* StartButton;
     
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Track")
     UBoxComponent* EndTrigger;
@@ -49,6 +49,9 @@ public:
 
     UFUNCTION(BlueprintCallable, Category = "Race Control")
     void SetupRaceFromData(const TArray<FMarbleData>& MarblesData);
+
+    UFUNCTION()
+    void InitialSpawnFromWorkbench();
 
 private:
     UPROPERTY()

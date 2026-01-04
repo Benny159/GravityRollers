@@ -1,5 +1,6 @@
 #include "RaceTrack.h"
 #include "MarbleGameMode.h"
+#include "MarbleWorkbench.h"
 #include "Kismet/GameplayStatics.h"
 #include "MarblePlayerController.h"
 
@@ -10,9 +11,8 @@ ARaceTrack::ARaceTrack()
     TrackMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TrackMesh"));
     RootComponent = TrackMesh;
     
-    StartBarrier = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StartBarrier"));
-    StartBarrier->SetupAttachment(RootComponent);
-    StartBarrier->SetMobility(EComponentMobility::Movable);
+    StartButton = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StartButton"));
+    StartButton->SetupAttachment(RootComponent);
     
     EndTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("EndTrigger"));
     EndTrigger->SetupAttachment(RootComponent);
@@ -44,6 +44,33 @@ void ARaceTrack::BeginPlay()
     if (EndTrigger)
     {
         EndTrigger->OnComponentBeginOverlap.AddDynamic(this, &ARaceTrack::OnEndOverlap);
+    }
+
+    FTimerHandle UnusedHandle;
+    GetWorld()->GetTimerManager().SetTimer(
+        UnusedHandle, 
+        this, 
+        &ARaceTrack::InitialSpawnFromWorkbench, 
+        0.2f,
+        false
+    );
+}
+
+void ARaceTrack::InitialSpawnFromWorkbench()
+{
+    AMarbleWorkbench* Workbench = Cast<AMarbleWorkbench>(
+        UGameplayStatics::GetActorOfClass(this, AMarbleWorkbench::StaticClass())
+    );
+
+    if (Workbench)
+    {
+        TArray<FMarbleData> InitialData = Workbench->GetAllMarbleData();
+        SetupRaceFromData(InitialData);
+        UE_LOG(LogTemp, Log, TEXT("RaceTrack: Initial-Spawn von Workbench erfolgreich. %d Murmeln gesetzt."), InitialData.Num());
+    }
+    else
+    {
+        UE_LOG(LogTemp, Warning, TEXT("RaceTrack: Konnte keine Workbench für den Initial-Spawn finden!"));
     }
 }
 
@@ -121,8 +148,6 @@ void ARaceTrack::StartRace()
 {
     if (bRaceStarted) return;
     bRaceStarted = true;
-    
-    StartBarrier->SetRelativeRotation(FRotator(80.f, 0.f, 0.f));
 
     for (AMarble* Marble : ActiveMarbles)
     {
@@ -136,7 +161,8 @@ void ARaceTrack::StartRace()
     if (PC)
     {
         PC->SetRaceState(true);
-        PC->FocusOnMarble(0); 
+        PC->FocusOnMarble(0);
+        PC->SelectMarble(PC->CurrentSelectedMarble);
     }
     
     AMarbleGameMode* GM = Cast<AMarbleGameMode>(UGameplayStatics::GetGameMode(this));
@@ -165,8 +191,6 @@ void ARaceTrack::ResetTrack()
         }
     }
     ActiveMarbles.Empty();
-    
-    StartBarrier->SetRelativeRotation(FRotator::ZeroRotator);
 
     AMarbleGameMode* GM = Cast<AMarbleGameMode>(UGameplayStatics::GetGameMode(this));
     if (GM)

@@ -27,8 +27,8 @@ AMarble::AMarble()
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->SetUsingAbsoluteRotation(true); 
     
-	CameraBoom->TargetArmLength = 1500.0f;
-	CameraBoom->SetRelativeRotation(FRotator(-30.f, 0.f, 0.f));
+	CameraBoom->TargetArmLength = 2500.0f;
+	CameraBoom->SetRelativeRotation(FRotator(-60.f, -60.f, 0.f));
 	CameraBoom->bDoCollisionTest = false;
 
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
@@ -69,6 +69,11 @@ void AMarble::NotifyActorOnClicked(FKey ButtonPressed)
 	Super::NotifyActorOnClicked(ButtonPressed);
 	
 	if (MarbleMesh->IsSimulatingPhysics()) return;
+
+	if (!ActorHasTag(FName("ConfigMarble"))) 
+	{
+		return; 
+	}
 	
 	AMarblePlayerController* PC = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());
 	if (PC)
