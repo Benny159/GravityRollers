@@ -20,6 +20,11 @@
 			"TargetAllowList": [
 				"Editor"
 			]
+		},
+		{
+			"Name": "DataTrackerPlugin",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/content/44935228baad48ee9fd9179c9a32623b"
 		}
 	]
 }

@@ -1,5 +1,6 @@
 #include "Marble.h"
 #include "MarbleGameMode.h"
+#include "MarbleStatHelper.h"
 #include "MarblePlayerController.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -61,6 +62,17 @@ void AMarble::Tick(float DeltaTime)
 	if (!MarbleMesh->IsSimulatingPhysics()) 
 	{
 		UpdateSelectionVisuals(DeltaTime);
+	}
+	AMarbleGameMode* GM = Cast<AMarbleGameMode>(GetWorld()->GetAuthGameMode());
+	
+	if (GM && GM->bRaceActive && !bHasFinished && !bIsEliminated)
+	{
+		float CurrentRaceTime = GM->CurrentRaceTime;
+		float CurrentSpeed = GetVelocity().Size();
+		
+		FString StatName = "Speed@" + GetName(); 
+		
+		UMarbleStatHelper::RecordStatPoint(StatName, CurrentRaceTime, CurrentSpeed);
 	}
 }
 
