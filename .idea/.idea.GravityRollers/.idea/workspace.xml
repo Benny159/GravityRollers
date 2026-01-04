@@ -13,11 +13,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cffe6fa6-6a99-4fc2-acda-cadbe9bca3df" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.GravityRollers/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GravityRollers/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/UI/WBP_MarbleModifier.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/UI/WBP_MarbleModifier.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Private/Marble.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Private/Marble.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Private/MarbleGameMode.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Private/MarbleGameMode.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Public/MarbleGameMode.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Public/MarbleGameMode.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Level/Kidsroom.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Level/Kidsroom.umap" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -195,7 +192,7 @@
       <workItem from="1767353885954" duration="9663000" />
       <workItem from="1767441385234" duration="21244000" />
       <workItem from="1767515714557" duration="3740000" />
-      <workItem from="1767519814846" duration="4281000" />
+      <workItem from="1767519814846" duration="4883000" />
     </task>
     <task id="LOCAL-00001" summary="[IMP]Logic for Checkpoints">
       <option name="closed" value="true" />
