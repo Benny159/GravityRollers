@@ -18,6 +18,12 @@ ARaceTrack::ARaceTrack()
     EndTrigger->SetupAttachment(RootComponent);
     EndTrigger->SetBoxExtent(FVector(100.f, 500.f, 100.f));
     EndTrigger->SetCollisionProfileName(TEXT("Trigger"));
+
+    EliminationZone = CreateDefaultSubobject<UBoxComponent>(TEXT("EliminationZone"));
+    EliminationZone->SetupAttachment(RootComponent);
+    EliminationZone->SetBoxExtent(FVector(5000.f, 2000.f, 100.f)); // Groß genug machen!
+    EliminationZone->SetRelativeLocation(FVector(0.f, 0.f, -1000.f)); // Tief unter der Strecke
+    EliminationZone->SetCollisionProfileName(TEXT("Trigger"));
     
     StartPointsRoot = CreateDefaultSubobject<USceneComponent>(TEXT("StartPointsRoot"));
     StartPointsRoot->SetupAttachment(RootComponent);
@@ -44,6 +50,11 @@ void ARaceTrack::BeginPlay()
     if (EndTrigger)
     {
         EndTrigger->OnComponentBeginOverlap.AddDynamic(this, &ARaceTrack::OnEndOverlap);
+    }
+
+    if (EliminationZone)
+    {
+        EliminationZone->OnComponentBeginOverlap.AddDynamic(this, &ARaceTrack::OnEliminationZoneOverlap);
     }
 
     FTimerHandle UnusedHandle;
@@ -220,6 +231,23 @@ void ARaceTrack::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other
         if (GM)
         {
             GM->RegisterMarbleFinished();
+        }
+    }
+}
+
+void ARaceTrack::OnEliminationZoneOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+    AMarble* Marble = Cast<AMarble>(OtherActor);
+    if (Marble)
+    {
+        UE_LOG(LogTemp, Warning, TEXT("Murmel ist rausgefallen: %s"), *Marble->GetName());
+        
+        Marble->Eliminate();
+        
+        AMarbleGameMode* GM = Cast<AMarbleGameMode>(GetWorld()->GetAuthGameMode());
+        if (GM)
+        {
+            GM->CheckRaceStatus();
         }
     }
 }
