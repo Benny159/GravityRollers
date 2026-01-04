@@ -78,3 +78,13 @@ void AMarbleGameMode::CheckRaceStatus()
         }
     }
 }
+
+void AMarbleGameMode::Tick(float DeltaSeconds)
+{
+    Super::Tick(DeltaSeconds);
+
+    if (bRaceActive)
+    {
+        CurrentRaceTime += DeltaSeconds;
+    }
+}

@@ -193,7 +193,8 @@ void AMarble::FinishRace(float TimeStamp, float FinishSpeed)
 	bHasFinished = true;
 	FinalRaceTime = TimeStamp;
 	FinalRaceSpeed = FinishSpeed;
-	
+
+	//muss eventuell entfernt sein
 	MarbleMesh->SetLinearDamping(2.0f);
 	MarbleMesh->SetAngularDamping(2.0f);
 

@@ -13,6 +13,14 @@ class GRAVITYROLLERS_API AMarbleGameMode : public AGameModeBase
 
 public:
     AMarbleGameMode();
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game Settings")
+    bool bAllowWind = true;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Game Settings")
+    bool bAllowSeismic = true;
+
+    virtual void Tick(float DeltaSeconds) override;
     
     UFUNCTION(BlueprintCallable, Category = "Race Control")
     void StartRace(int32 NumberOfMarbles = 5);
@@ -35,13 +43,14 @@ public:
     UPROPERTY(BlueprintAssignable, Category = "Race Events")
     FOnRaceEndedSignature OnRaceEnded;
 
-protected:
-
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race State")
     bool bRaceActive;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race State")
     float RaceStartTime;
+
+    UPROPERTY(BlueprintReadOnly, Category = "Race")
+    float CurrentRaceTime = 0.0f;
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race State")
     float RaceEndTime;
