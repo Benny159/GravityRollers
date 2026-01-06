@@ -14,6 +14,7 @@ AMarbleGameMode::AMarbleGameMode()
 void AMarbleGameMode::StartRace(int32 NumberOfMarbles)
 {
     ResetRaceState();
+    StartedEnded();
 
     TotalMarbles = NumberOfMarbles;
     bRaceActive = true;
