@@ -7,13 +7,18 @@ void UMarbleStatHelper::RecordStatPoint(FString DataSetName, float Time, float V
     
 	if (Set)
 	{
-		Set->Update(Time, Value, true, false, false, false, false, false);
+		Set->Update(Time, Value, false, false, false, false, true, false);
 	}
 }
 
 UDataSet* UMarbleStatHelper::GetDataSetByName(FString DataSetName)
 {
 	return ADataTracker::GetDataSet(DataSetName);
+}
+
+TArray<UDataSet*> UMarbleStatHelper::GetAllDataSets()
+{
+	return ADataTracker::GetAllDataSets();
 }
 
 TArray<FVector2D> UMarbleStatHelper::ConvertDataSetToGraphPoints(UDataSet* DataSet)
@@ -33,4 +38,11 @@ TArray<FVector2D> UMarbleStatHelper::ConvertDataSetToGraphPoints(UDataSet* DataS
 	}
 
 	return Points;
+}
+void UMarbleStatHelper::ClearAllStatistics()
+{
+	if (ADataTracker::GDataTracker.IsValid())
+	{
+		ADataTracker::ClearAllDataSets();
+	}
 }

@@ -1,6 +1,7 @@
 #include "Marble.h"
 #include "MarbleGameMode.h"
-#include "MarbleStatHelper.h"
+#include "DataTrackerPlugin/DataSet/DataSet.h"
+#include "DataTrackerPlugin/DataTracker.h"
 #include "MarblePlayerController.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -65,14 +66,21 @@ void AMarble::Tick(float DeltaTime)
 	}
 	AMarbleGameMode* GM = Cast<AMarbleGameMode>(GetWorld()->GetAuthGameMode());
 	
-	if (GM && GM->bRaceActive && !bHasFinished && !bIsEliminated)
+	if (GM && GM->bRaceActive && !bHasFinished && !bIsEliminated && !ActorHasTag(FName("ConfigMarble")))
 	{
-		float CurrentRaceTime = GM->CurrentRaceTime;
-		float CurrentSpeed = GetVelocity().Size();
+		float RaceStartTime = GM->RaceStartTime;
+		float CurrentSpeed = GetVelocity().Size() / ScaleFactor;
+		float ActualRaceTime = GetWorld()->GetTimeSeconds();
+		float Time = ActualRaceTime - RaceStartTime;
 		
-		FString StatName = "Speed@" + GetName(); 
+		FString StatName = "Speed@" + MarbleName;
+
+		UDataSet* Set = ADataTracker::GetDataSet(StatName);
 		
-		UMarbleStatHelper::RecordStatPoint(StatName, CurrentRaceTime, CurrentSpeed);
+		if (Set)
+		{
+			Set->Update(Time, CurrentSpeed, true, true, true, false, false, false);
+		}
 	}
 }
 
@@ -115,7 +123,7 @@ void AMarble::UpdateSelectionVisuals(float DeltaTime)
 FMarbleData AMarble::GetMarbleData() const
 {
 	FMarbleData Data;
-	Data.MarbleName = GetName();
+	Data.MarbleName = MarbleName;
 	Data.Size = Size;
 	Data.Weight = Weight;
 	Data.SurfaceRoughness = SurfaceRoughness;
@@ -168,6 +176,7 @@ UPhysicalMaterial* AMarble::CreatePhysicsMaterial()
 
 void AMarble::InitializeFromData(const FMarbleData& Data)
 {
+	MarbleName = Data.MarbleName;
 	Size = Data.Size;
 	Weight = Data.Weight;
 	SurfaceRoughness = Data.SurfaceRoughness;
@@ -195,7 +204,7 @@ void AMarble::PassCheckpoint(int32 CheckpointIndex, float TimeStamp, float Curre
 	CheckpointSpeeds[CheckpointIndex] = CurrentSpeed;
     
 	UE_LOG(LogTemp, Log, TEXT("Murmel %s -> Checkpoint %d | Zeit: %.2fs | Speed: %.2f cm/s"), 
-		*GetName(), CheckpointIndex, TimeStamp, CurrentSpeed);
+		*MarbleName, CheckpointIndex, TimeStamp, CurrentSpeed);
 }
 
 void AMarble::FinishRace(float TimeStamp, float FinishSpeed)
@@ -211,7 +220,7 @@ void AMarble::FinishRace(float TimeStamp, float FinishSpeed)
 	MarbleMesh->SetAngularDamping(2.0f);
 
 	UE_LOG(LogTemp, Warning, TEXT("ZIEL! Murmel %s | Zeit: %.2fs | Speed: %.2f cm/s"), 
-		*GetName(), FinalRaceTime, FinalRaceSpeed);
+		*MarbleName, FinalRaceTime, FinalRaceSpeed);
 }
 
 void AMarble::Eliminate()
@@ -236,5 +245,5 @@ void AMarble::Eliminate()
 	FinalRaceSpeed = CrashSpeed;
 
 	UE_LOG(LogTemp, Error, TEXT("ELIMINIERT! Murmel %s | Crash-Zeit: %.2fs | Crash-Speed: %.2f cm/s"), 
-		*GetName(), FinalRaceTime, FinalRaceSpeed);
+		*MarbleName, FinalRaceTime, FinalRaceSpeed);
 }

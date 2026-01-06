@@ -43,6 +43,9 @@ public:
     UPROPERTY(BlueprintAssignable, Category = "Race Events")
     FOnRaceEndedSignature OnRaceEnded;
 
+    UFUNCTION(BlueprintImplementableEvent, Category = "Race Events")
+    void RaceEnded();
+
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race State")
     bool bRaceActive;
 

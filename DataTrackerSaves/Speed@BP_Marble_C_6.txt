@@ -1,0 +1,109 @@
+N 0.0
+Minimum 1000000.0
+Maximum -1000000.0
+
+>> Mean_Descriptive: 
+Mean 0.0
+Variance 0.0
+StandardDeviation 0.0
+StandardError 0.0
+ConfidenceIntervalUpperLimit 0.0
+ConfidenceIntervalLowerLimit 0.0
+ConfidenceInterval 0.0
+
+>> Median_Descriptive: 
+Median 0.0
+Variance 0.0
+StandardDeviation 0.0
+StandardError 0.0
+ConfidenceIntervalUpperLimit 1185.620117
+ConfidenceIntervalLowerLimit 1121.56958
+ConfidenceInterval 0.0
+
+>> Regression_Descriptive: 
+Slope 0.0
+YIntercept 0.0
+TimeVariance 0.0
+ErrorVariance 0.0
+RewardVariance 0.0
+RegressionVariance 0.0
+
+StandardError 0.0
+StandardError1 0.0
+StandardEstimationError 0.0
+CorrelationCoefficient 0.0
+DeterminationCoefficient 0.0
+
+>> Binary_Descriptive: 
+SamplesA 0.0
+SamplesB 0.0
+ProbabilityA 0.0
+ProbabilityB 0.0
+
+>> Histogram: 
+Values	| Count	| Bins
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+-1.000.000	| 0	| 
+

@@ -1,0 +1,109 @@
+N 471.0
+Minimum 0.0
+Maximum 2008.686279
+
+>> Mean_Descriptive: 
+Mean 0.0
+Variance 0.0
+StandardDeviation 0.0
+StandardError 0.0
+ConfidenceIntervalUpperLimit 0.0
+ConfidenceIntervalLowerLimit 0.0
+ConfidenceInterval 0.0
+
+>> Median_Descriptive: 
+Median 0.0
+Variance 0.0
+StandardDeviation 0.0
+StandardError 0.0
+ConfidenceIntervalUpperLimit 0.0
+ConfidenceIntervalLowerLimit 0.0
+ConfidenceInterval 0.0
+
+>> Regression_Descriptive: 
+Slope 0.0
+YIntercept 0.0
+TimeVariance 0.0
+ErrorVariance 0.0
+RewardVariance 0.0
+RegressionVariance 0.0
+
+StandardError 0.0
+StandardError1 0.0
+StandardEstimationError 0.0
+CorrelationCoefficient 0.0
+DeterminationCoefficient 0.0
+
+>> Binary_Descriptive: 
+SamplesA 0.0
+SamplesB 0.0
+ProbabilityA 0.0
+ProbabilityB 0.0
+
+>> Histogram: 
+Values	| Count	| Bins
+-968.750	| 0	| 
+-937.500	| 0	| 
+-906.250	| 0	| 
+-875.000	| 0	| 
+-843.750	| 0	| 
+-812.500	| 0	| 
+-781.250	| 0	| 
+-750.000	| 0	| 
+-718.750	| 0	| 
+-687.500	| 0	| 
+-656.250	| 0	| 
+-625.000	| 0	| 
+-593.750	| 0	| 
+-562.500	| 0	| 
+-531.250	| 0	| 
+-500.000	| 0	| 
+-468.750	| 0	| 
+-437.500	| 0	| 
+-406.250	| 0	| 
+-375.000	| 0	| 
+-343.750	| 0	| 
+-312.500	| 0	| 
+-281.250	| 0	| 
+-250.000	| 0	| 
+-218.750	| 0	| 
+-187.500	| 0	| 
+-156.250	| 0	| 
+-125.000	| 0	| 
+-93.750	| 0	| 
+-62.500	| 0	| 
+-31.250	| 0	| 
+0	| 0	| 
+31.250	| 0	| 
+62.500	| 0	| 
+93.750	| 0	| 
+125.000	| 0	| 
+156.250	| 0	| 
+187.500	| 0	| 
+218.750	| 0	| 
+250.000	| 0	| 
+281.250	| 0	| 
+312.500	| 0	| 
+343.750	| 0	| 
+375.000	| 0	| 
+406.250	| 0	| 
+437.500	| 0	| 
+468.750	| 0	| 
+500.000	| 0	| 
+531.250	| 0	| 
+562.500	| 0	| 
+593.750	| 0	| 
+625.000	| 0	| 
+656.250	| 0	| 
+687.500	| 0	| 
+718.750	| 0	| 
+750.000	| 0	| 
+781.250	| 0	| 
+812.500	| 0	| 
+843.750	| 0	| 
+875.000	| 0	| 
+906.250	| 0	| 
+937.500	| 0	| 
+968.750	| 0	| 
+1.000.000	| 0	| 
+

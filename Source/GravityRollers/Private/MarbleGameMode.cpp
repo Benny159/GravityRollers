@@ -71,6 +71,7 @@ void AMarbleGameMode::CheckRaceStatus()
         RaceEndTime = GetWorld()->GetTimeSeconds();
 
         UE_LOG(LogTemp, Warning, TEXT("RENNEN BEENDET! Alle Murmeln sind durch."));
+        RaceEnded();
         
         if (OnRaceEnded.IsBound())
         {

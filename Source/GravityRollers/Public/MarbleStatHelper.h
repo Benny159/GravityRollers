@@ -16,7 +16,13 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 	static UDataSet* GetDataSetByName(FString DataSetName);
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	static TArray<UDataSet*> GetAllDataSets();
 	
 	UFUNCTION(BlueprintCallable, Category = "Stats")
 	static TArray<FVector2D> ConvertDataSetToGraphPoints(UDataSet* DataSet);
+
+	UFUNCTION(BlueprintCallable, Category = "Stats")
+	static void ClearAllStatistics();
 };

@@ -1,5 +1,7 @@
 #include "MarbleWorkbench.h"
 
+#include <string>
+
 AMarbleWorkbench::AMarbleWorkbench()
 {
     PrimaryActorTick.bCanEverTick = false;
@@ -46,7 +48,8 @@ void AMarbleWorkbench::BeginPlay()
             if (NewMarble)
             {
                 NewMarble->SetFrozen(true);       
-                NewMarble->StartingLaneIndex = i; 
+                NewMarble->StartingLaneIndex = i;
+                NewMarble->MarbleName = FString::Printf(TEXT("Marble_POS%d"), i + 1);
                 
                 NewMarble->AttachToComponent(SlotArrows[i], FAttachmentTransformRules::KeepWorldTransform);
                 
@@ -69,6 +72,7 @@ void AMarbleWorkbench::SwapLaneAssignments(AMarble* TargetMarble, int32 DesiredL
     if (!TargetMarble || DesiredLaneIndex < 0 || DesiredLaneIndex > 4) return;
     
     int32 OldLaneIndex = TargetMarble->StartingLaneIndex;
+    FString OldMarbleName = TargetMarble->MarbleName;
     
     if (OldLaneIndex == DesiredLaneIndex) return;
     AMarble* ConflictingMarble = nullptr;
@@ -83,13 +87,15 @@ void AMarbleWorkbench::SwapLaneAssignments(AMarble* TargetMarble, int32 DesiredL
     }
     
     TargetMarble->StartingLaneIndex = DesiredLaneIndex;
+    TargetMarble->MarbleName = FString::Printf(TEXT("Marble_POS%d"), DesiredLaneIndex + 1);
     
     if (ConflictingMarble)
     {
         ConflictingMarble->StartingLaneIndex = OldLaneIndex;
+        ConflictingMarble->MarbleName = OldMarbleName;
         UE_LOG(LogTemp, Log, TEXT("Bahn getauscht: %s ist jetzt Bahn %d, %s ist jetzt Bahn %d"), 
-            *TargetMarble->GetName(), DesiredLaneIndex + 1, 
-            *ConflictingMarble->GetName(), OldLaneIndex + 1);
+            *TargetMarble->MarbleName, DesiredLaneIndex + 1, 
+            *ConflictingMarble->MarbleName, OldLaneIndex + 1);
     }
 }
 

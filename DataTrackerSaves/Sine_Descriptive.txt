@@ -1,0 +1,109 @@
+N 3081.0
+Minimum -0.199999
+Maximum 1.999999
+
+>> Mean_Descriptive: 
+Mean 0.913026
+Variance 0.880804
+StandardDeviation 0.938512
+StandardError 0.016908
+ConfidenceIntervalUpperLimit 0.946165
+ConfidenceIntervalLowerLimit 0.879886
+ConfidenceInterval 0.06628
+
+>> Median_Descriptive: 
+Median 0.927113
+Variance 0.880804
+StandardDeviation 0.938512
+StandardError 0.016908
+ConfidenceIntervalUpperLimit 0.960253
+ConfidenceIntervalLowerLimit 0.893973
+ConfidenceInterval 0.06628
+
+>> Regression_Descriptive: 
+Slope 0.000327
+YIntercept 0.905762
+TimeVariance 157.342056
+ErrorVariance 1.439758
+RewardVariance 0.605128
+RegressionVariance 0.9092
+
+StandardError 0.001723
+StandardError1 0.001723
+StandardEstimationError 1.199899
+CorrelationCoefficient 0.005279
+DeterminationCoefficient 1.502493
+
+>> Binary_Descriptive: 
+SamplesA 1926.0
+SamplesB 1155.0
+ProbabilityA 0.625122
+ProbabilityB 0.374878
+
+>> Histogram: 
+Values	| Count	| Bins
+3,031	| 0	| 
+2,962	| 0	| 
+2,894	| 0	| 
+2,825	| 0	| 
+2,756	| 0	| 
+2,687	| 0	| 
+2,619	| 0	| 
+2,55	| 0	| 
+2,481	| 0	| 
+2,412	| 0	| 
+2,344	| 0	| 
+2,275	| 0	| 
+2,206	| 0	| 
+2,137	| 0	| 
+2,069	| 0	| 
+2	| 256	| XXXXXXXX
+1,931	| 188	| XXXXXX
+1,862	| 128	| XXXX
+1,794	| 107	| XXX
+1,725	| 93	| XXX
+1,656	| 85	| XX
+1,587	| 81	| XX
+1,519	| 74	| XX
+1,45	| 71	| XX
+1,381	| 68	| XX
+1,312	| 65	| XX
+1,244	| 67	| XX
+1,175	| 61	| X
+1,106	| 64	| XX
+1,037	| 61	| X
+0,969	| 63	| XX
+0,9	| 66	| XX
+0,831	| 59	| X
+0,763	| 62	| XX
+0,694	| 61	| X
+0,625	| 62	| XX
+0,556	| 64	| XX
+0,488	| 63	| XX
+0,419	| 67	| XX
+0,35	| 69	| XX
+0,281	| 70	| XX
+0,213	| 79	| XX
+0,144	| 88	| XX
+0,075	| 91	| XX
+0,006	| 110	| XXX
+-0,062	| 122	| XXX
+-0,131	| 177	| XXXXX
+-0,2	| 239	| XXXXXXX
+-0,269	| 0	| 
+-0,337	| 0	| 
+-0,406	| 0	| 
+-0,475	| 0	| 
+-0,544	| 0	| 
+-0,612	| 0	| 
+-0,681	| 0	| 
+-0,75	| 0	| 
+-0,819	| 0	| 
+-0,887	| 0	| 
+-0,956	| 0	| 
+-1,025	| 0	| 
+-1,094	| 0	| 
+-1,162	| 0	| 
+-1,231	| 0	| 
+-1,3	| 0	| 
+

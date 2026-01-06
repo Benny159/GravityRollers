@@ -69,6 +69,12 @@ public:
 	FVector InitialLocation;
 	void UpdateSelectionVisuals(float DeltaTime);
 	void SetSelected(bool bSelected);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float ScaleFactor = 100.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString MarbleName = "Marble";
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	UStaticMeshComponent* MarbleMesh;
