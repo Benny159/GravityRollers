@@ -50,6 +50,12 @@ void AMarble::BeginPlay()
 	Super::BeginPlay();
 	InitialLocation = GetActorLocation();
 	UpdatePhysicsProperties();
+
+	AMarbleGameMode* GM = Cast<AMarbleGameMode>(GetWorld()->GetAuthGameMode());
+	if (GM && !ActorHasTag(FName("ConfigMarble")))
+	{
+		GM->RegisterMarble(this);
+	}
 }
 
 void AMarble::Tick(float DeltaTime)

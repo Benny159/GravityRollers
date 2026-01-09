@@ -24,6 +24,15 @@ public:
     
     UFUNCTION(BlueprintCallable, Category = "Race Control")
     void StartRace(int32 NumberOfMarbles = 5);
+
+    UPROPERTY(BlueprintReadOnly, Category = "Race Data")
+    TArray<AMarble*> RacingMarbles;
+    
+    UFUNCTION(BlueprintCallable, Category = "Race Setup")
+    void RegisterMarble(AMarble* NewMarble);
+    
+    UFUNCTION(BlueprintCallable, Category = "Race Info")
+    TArray<AMarble*> GetMarblesSortedByRank();
     
     UFUNCTION(BlueprintCallable, Category = "Race Control")
     void ResetRaceState();

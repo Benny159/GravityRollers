@@ -49,7 +49,7 @@ void AMarbleWorkbench::BeginPlay()
             {
                 NewMarble->SetFrozen(true);       
                 NewMarble->StartingLaneIndex = i;
-                NewMarble->MarbleName = FString::Printf(TEXT("Marble_POS%d"), i + 1);
+                NewMarble->MarbleName = FString::Printf(TEXT("M_POS%d"), i + 1);
                 
                 NewMarble->AttachToComponent(SlotArrows[i], FAttachmentTransformRules::KeepWorldTransform);
                 
@@ -87,7 +87,7 @@ void AMarbleWorkbench::SwapLaneAssignments(AMarble* TargetMarble, int32 DesiredL
     }
     
     TargetMarble->StartingLaneIndex = DesiredLaneIndex;
-    TargetMarble->MarbleName = FString::Printf(TEXT("Marble_POS%d"), DesiredLaneIndex + 1);
+    TargetMarble->MarbleName = FString::Printf(TEXT("M_POS%d"), DesiredLaneIndex + 1);
     
     if (ConflictingMarble)
     {

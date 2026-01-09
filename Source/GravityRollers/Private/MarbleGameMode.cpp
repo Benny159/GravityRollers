@@ -12,6 +12,28 @@ AMarbleGameMode::AMarbleGameMode()
     EliminatedCount = 0;
 }
 
+void AMarbleGameMode::RegisterMarble(AMarble* NewMarble)
+{
+    if (NewMarble && !RacingMarbles.Contains(NewMarble))
+    {
+        RacingMarbles.Add(NewMarble);
+        TotalMarbles = RacingMarbles.Num(); 
+        UE_LOG(LogTemp, Log, TEXT("Murmel registriert: %s. Total: %d"), *NewMarble->GetName(), TotalMarbles);
+    }
+}
+
+TArray<AMarble*> AMarbleGameMode::GetMarblesSortedByRank()
+{
+    TArray<AMarble*> SortedList = RacingMarbles;
+    
+    SortedList.Sort([](const AMarble& A, const AMarble& B)
+    {
+        return A.FinalRank < B.FinalRank;
+    });
+
+    return SortedList;
+}
+
 void AMarbleGameMode::StartRace(int32 NumberOfMarbles)
 {
     ResetRaceState();
