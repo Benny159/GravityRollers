@@ -231,6 +231,7 @@ void ARaceTrack::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other
         if (GM)
         {
             GM->RegisterMarbleFinished();
+            Marble->FinalRank = GM->FinishedCount;
         }
     }
 }

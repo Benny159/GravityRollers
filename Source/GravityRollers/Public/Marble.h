@@ -65,6 +65,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FMarbleData GetMarbleData() const;
 	
+	UPROPERTY(BlueprintReadOnly, Category = "RaceStats")
+	int32 FinalRank = 0;
+	
 	bool bIsSelected;
 	FVector InitialLocation;
 	void UpdateSelectionVisuals(float DeltaTime);

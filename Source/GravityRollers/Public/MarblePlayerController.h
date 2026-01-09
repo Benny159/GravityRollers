@@ -26,6 +26,9 @@ public:
 	void SwitchToConfigView();
 
 	UFUNCTION(BlueprintCallable, Category = "Camera Control")
+	void SwitchToAnalysView();
+
+	UFUNCTION(BlueprintCallable, Category = "Camera Control")
 	void FocusOnMarble(int32 MarbleIndex);
 
 	UFUNCTION(BlueprintCallable, Category = "Game State")

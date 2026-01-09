@@ -1,4 +1,5 @@
 #include "MarbleGameMode.h"
+#include "MarblePlayerController.h"
 
 AMarbleGameMode::AMarbleGameMode()
 {
@@ -73,6 +74,14 @@ void AMarbleGameMode::CheckRaceStatus()
 
         UE_LOG(LogTemp, Warning, TEXT("RENNEN BEENDET! Alle Murmeln sind durch."));
         RaceEnded();
+
+        AMarblePlayerController* PC = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());
+        if (PC)
+        {
+            PC->SetRaceState(false);
+            PC->SwitchToAnalysView();
+            PC->SelectMarble(NULL);
+        }
         
         if (OnRaceEnded.IsBound())
         {
