@@ -106,8 +106,14 @@ void ARaceTrack::SpawnMarble(TSubclassOf<AMarble> MarbleClass, int32 LaneIndex, 
 
 void ARaceTrack::SetupRaceFromData(const TArray<FMarbleData>& MarblesData)
 {
-    ResetTrack();
-
+    for (AMarble* Marble : ActiveMarbles)
+    {
+        if (Marble && IsValid(Marble))
+        {
+            Marble->Destroy();
+        }
+    }
+    ActiveMarbles.Empty();
     for (const FMarbleData& Data : MarblesData)
     {
         int32 TargetLane = Data.PreferredLaneIndex;
@@ -159,8 +165,8 @@ void ARaceTrack::ResetTrack()
     AMarblePlayerController* PC = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());
     if (PC)
     {
-        PC->SetRaceState(false);
         PC->SwitchToConfigView();
+        PC->SetRaceState(false);
     }
     
     for (AMarble* Marble : ActiveMarbles)
@@ -171,12 +177,15 @@ void ARaceTrack::ResetTrack()
         }
     }
     ActiveMarbles.Empty();
-
     AMarbleGameMode* GM = Cast<AMarbleGameMode>(UGameplayStatics::GetGameMode(this));
     if (GM)
     {
         GM->ResetRaceState();
     }
+    AMarbleWorkbench* Workbench = Cast<AMarbleWorkbench>(
+        UGameplayStatics::GetActorOfClass(this, AMarbleWorkbench::StaticClass())
+    );
+    SetupRaceFromData(Workbench->GetAllMarbleData());
 
     UE_LOG(LogTemp, Log, TEXT("RaceTrack zurückgesetzt."));
 }

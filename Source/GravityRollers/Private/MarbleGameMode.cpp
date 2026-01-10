@@ -55,6 +55,7 @@ void AMarbleGameMode::ResetRaceState()
     FinishedCount = 0;
     EliminatedCount = 0;
     RaceEndTime = 0.0f;
+    RacingMarbles.Empty();
     ADataTracker::ClearAllDataSets();
 }
 

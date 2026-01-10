@@ -107,12 +107,12 @@ void AMarblePlayerController::SwitchToRaceView()
 
 void AMarblePlayerController::SwitchToAnalysView()
 {
-    bRaceIsActive = false;
     AActor* AnalyseCam = FindCameraByTag(FName("AnalyseCam"));
     if (AnalyseCam)
     {
         SetViewTargetWithBlend(AnalyseCam, 2.0f, EViewTargetBlendFunction::VTBlend_EaseInOut, 2.0f);
     }
+    bRaceIsActive = false;
 }
 
 void AMarblePlayerController::SwitchToConfigView()
