@@ -15,13 +15,9 @@
     <list default="true" id="cffe6fa6-6a99-4fc2-acda-cadbe9bca3df" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GravityRollers/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GravityRollers/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_MarbleGameMode.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_MarbleGameMode.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/WBP_MarbleDataLaptop.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/WBP_MarbleDataLaptop.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/UI/WBP_LaptopScreen.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/UI/WBP_LaptopScreen.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Private/Marble.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Private/Marble.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Private/MarbleGameMode.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Private/MarbleGameMode.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Private/MarbleWorkbench.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Private/MarbleWorkbench.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Private/RaceTrack.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Private/RaceTrack.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Public/MarbleGameMode.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Public/MarbleGameMode.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Private/MarblePlayerController.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Private/MarblePlayerController.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -215,6 +211,7 @@
       <workItem from="1767711447978" duration="2091000" />
       <workItem from="1767714359220" duration="2576000" />
       <workItem from="1767957534624" duration="12513000" />
+      <workItem from="1768043580611" duration="1975000" />
     </task>
     <task id="LOCAL-00001" summary="[IMP]Logic for Checkpoints">
       <option name="closed" value="true" />

@@ -1,5 +1,6 @@
 #include "MarblePlayerController.h"
 #include "Kismet/GameplayStatics.h"
+#include "DataTrackerPlugin/DataTracker.h"
 #include "Camera/CameraActor.h"
 #include "Marble.h"
 
@@ -17,6 +18,7 @@ void AMarblePlayerController::BeginPlay()
 {
     Super::BeginPlay();
     SwitchToConfigView();
+    ADataTracker::ClearAllDataSets();
 }
 
 void AMarblePlayerController::SelectMarble(AMarble* NewMarble)

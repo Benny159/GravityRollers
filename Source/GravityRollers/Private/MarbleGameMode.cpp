@@ -1,4 +1,5 @@
 #include "MarbleGameMode.h"
+#include "DataTrackerPlugin/DataTracker.h"
 #include "MarblePlayerController.h"
 
 AMarbleGameMode::AMarbleGameMode()
@@ -24,6 +25,9 @@ void AMarbleGameMode::RegisterMarble(AMarble* NewMarble)
 
 TArray<AMarble*> AMarbleGameMode::GetMarblesSortedByRank()
 {
+    RacingMarbles.RemoveAll([](AMarble* Marble) {
+        return Marble == nullptr || !IsValid(Marble);
+    });
     TArray<AMarble*> SortedList = RacingMarbles;
     
     SortedList.Sort([](const AMarble& A, const AMarble& B)
@@ -52,6 +56,7 @@ void AMarbleGameMode::ResetRaceState()
     FinishedCount = 0;
     EliminatedCount = 0;
     RaceEndTime = 0.0f;
+    ADataTracker::ClearAllDataSets();
 }
 
 float AMarbleGameMode::GetCurrentRaceTime() const
