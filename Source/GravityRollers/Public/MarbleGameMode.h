@@ -69,8 +69,9 @@ public:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race State")
     float RaceEndTime;
-    
-    int32 TotalMarbles;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race State")
+    int32 TotalMarbles = 5;
     
     int32 FinishedCount;
     int32 EliminatedCount;

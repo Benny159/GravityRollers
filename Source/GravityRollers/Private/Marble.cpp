@@ -52,10 +52,6 @@ void AMarble::BeginPlay()
 	UpdatePhysicsProperties();
 
 	AMarbleGameMode* GM = Cast<AMarbleGameMode>(GetWorld()->GetAuthGameMode());
-	if (GM && !ActorHasTag(FName("ConfigMarble")))
-	{
-		GM->RegisterMarble(this);
-	}
 }
 
 void AMarble::Tick(float DeltaTime)
@@ -139,6 +135,9 @@ FMarbleData AMarble::GetMarbleData() const
 	Data.Restitution = Restitution;
 	Data.AngularDamping = AngularDamping;
 	Data.PreferredLaneIndex = StartingLaneIndex;
+	Data.FinalRaceTime= FinalRaceTime;
+	Data.FinalRaceSpeed = FinalRaceSpeed;
+	Data.FinalRank = FinalRank;
 
 	return Data;
 }
@@ -219,7 +218,7 @@ void AMarble::FinishRace(float TimeStamp, float FinishSpeed)
 
 	bHasFinished = true;
 	FinalRaceTime = TimeStamp;
-	FinalRaceSpeed = FinishSpeed;
+	FinalRaceSpeed = FinishSpeed / ScaleFactor;
 
 	//muss eventuell entfernt sein
 	MarbleMesh->SetLinearDamping(2.0f);
@@ -233,7 +232,7 @@ void AMarble::Eliminate()
 {
 	if (bIsEliminated || bHasFinished) return;
 	
-	float CrashSpeed = GetVelocity().Size();
+	float CrashSpeed = GetVelocity().Size() / ScaleFactor;
 	float CrashTime = 0.0f;
 	AMarbleGameMode* GM = Cast<AMarbleGameMode>(UGameplayStatics::GetGameMode(this));
 	if (GM) 

@@ -230,9 +230,9 @@ void ARaceTrack::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other
         
         if (GM)
         {
+            Marble->FinalRank = GM->FinishedCount+1;
+            GM->RegisterMarble(Marble);
             GM->RegisterMarbleFinished();
-            Marble->FinalRank = GM->FinishedCount;
-            GM->GetMarblesSortedByRank();
         }
     }
 }
@@ -250,6 +250,7 @@ void ARaceTrack::OnEliminationZoneOverlap(UPrimitiveComponent* OverlappedComp, A
         if (GM)
         {
             GM->CheckRaceStatus();
+            GM->RegisterMarble(Marble);
         }
     }
 }

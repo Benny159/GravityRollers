@@ -18,7 +18,6 @@ void AMarbleGameMode::RegisterMarble(AMarble* NewMarble)
     if (NewMarble && !RacingMarbles.Contains(NewMarble))
     {
         RacingMarbles.Add(NewMarble);
-        TotalMarbles = RacingMarbles.Num(); 
         UE_LOG(LogTemp, Log, TEXT("Murmel registriert: %s. Total: %d"), *NewMarble->GetName(), TotalMarbles);
     }
 }
@@ -100,6 +99,7 @@ void AMarbleGameMode::CheckRaceStatus()
         RaceEndTime = GetWorld()->GetTimeSeconds();
 
         UE_LOG(LogTemp, Warning, TEXT("RENNEN BEENDET! Alle Murmeln sind durch."));
+        GetMarblesSortedByRank();
         RaceEnded();
 
         AMarblePlayerController* PC = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());

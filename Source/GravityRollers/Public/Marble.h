@@ -43,6 +43,15 @@ struct FMarbleData
 	int32 PreferredLaneIndex = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int32 FinalRank = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float FinalRaceTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float FinalRaceSpeed;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FLinearColor MarbleColor = FLinearColor::White;
 };
 
