@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "Marble.h"
+#include "Camera/CameraActor.h"
 #include "MarblePlayerController.generated.h"
 
 UCLASS()
@@ -24,6 +25,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable, Category = "Camera Control")
 	void SwitchToConfigView();
+	
+	void SwitchToConfigViewFromRace(FVector LastCameraLocation, FRotator LastCameraRotation);
 
 	UFUNCTION(BlueprintCallable, Category = "Camera Control")
 	void SwitchToAnalysView();
@@ -42,6 +45,9 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	AMarble* CurrentSelectedMarble;
 
+	UPROPERTY(BlueprintReadOnly)
+	AMarble* CurrentViewedMarble;
+
 	UFUNCTION(BlueprintImplementableEvent, Category = "UI")
 	void OnShowMarbleUI(AMarble* Marble);
 	
@@ -49,6 +55,14 @@ public:
 	void OnHideMarbleUI();
 
 private:
+	UPROPERTY()
+	ACameraActor* GhostCameraActor;
+
+	FTimerHandle TimerHandle_CleanupGhost;
+
+	UFUNCTION()
+	void CleanupGhostCamera();
+	
 	bool bRaceIsActive;
 
 	int32 CurrentViewIndex;

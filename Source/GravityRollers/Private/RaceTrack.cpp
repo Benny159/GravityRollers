@@ -165,7 +165,15 @@ void ARaceTrack::ResetTrack()
     AMarblePlayerController* PC = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());
     if (PC)
     {
-        PC->SwitchToConfigView();
+        if (PC->IsRaceActive())
+        {
+            UCameraComponent* Cam = PC->CurrentViewedMarble->FollowCamera;
+            PC->SwitchToConfigViewFromRace(Cam->GetComponentLocation(),Cam->GetComponentRotation());
+        }
+        else
+        {
+            PC->SwitchToConfigView();
+        }
         PC->SetRaceState(false);
     }
     

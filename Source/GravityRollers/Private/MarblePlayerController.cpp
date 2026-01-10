@@ -117,11 +117,43 @@ void AMarblePlayerController::SwitchToAnalysView()
 
 void AMarblePlayerController::SwitchToConfigView()
 {
-    bRaceIsActive = false;
     AActor* ConfigCam = FindCameraByTag(FName("ConfigCam"));
     if (ConfigCam)
     {
         SetViewTargetWithBlend(ConfigCam, 2.0f, EViewTargetBlendFunction::VTBlend_EaseInOut, 2.0f);
+    }
+    bRaceIsActive = false;
+}
+
+void AMarblePlayerController::SwitchToConfigViewFromRace(FVector LastCameraLocation, FRotator LastCameraRotation)
+{
+    FActorSpawnParameters SpawnParams;
+    SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+    
+    GhostCameraActor = GetWorld()->SpawnActor<ACameraActor>(LastCameraLocation, LastCameraRotation, SpawnParams);
+    AActor* ConfigCam = FindCameraByTag(FName("ConfigCam"));
+    
+    if (GhostCameraActor)
+    {
+        SetViewTarget(GhostCameraActor);
+    }
+    
+    if (ConfigCam) 
+    {
+        SetViewTargetWithBlend(ConfigCam, 1.5f, EViewTargetBlendFunction::VTBlend_EaseInOut, 2.0f);
+    }
+    
+    GetWorld()->GetTimerManager().SetTimer(TimerHandle_CleanupGhost, this, &AMarblePlayerController::CleanupGhostCamera, 2.0f, false);
+    
+    bRaceIsActive = false;
+}
+
+void AMarblePlayerController::CleanupGhostCamera()
+{
+    if (GhostCameraActor)
+    {
+        GhostCameraActor->Destroy();
+        GhostCameraActor = nullptr;
     }
 }
 
@@ -146,6 +178,7 @@ void AMarblePlayerController::FocusOnMarble(int32 MarbleIndex)
     
     if (TargetMarble)
     {
+        CurrentViewedMarble = TargetMarble;
         SetViewTargetWithBlend(TargetMarble, 0.5f, EViewTargetBlendFunction::VTBlend_Cubic);
     }
 }
