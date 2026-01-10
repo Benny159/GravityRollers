@@ -195,23 +195,6 @@ void AMarble::InitializeFromData(const FMarbleData& Data)
 	UpdatePhysicsProperties();
 }
 
-void AMarble::PassCheckpoint(int32 CheckpointIndex, float TimeStamp, float CurrentSpeed)
-{
-	if (bIsEliminated || bHasFinished) return;
-	
-	if (CheckpointTimes.Num() <= CheckpointIndex)
-	{
-		CheckpointTimes.SetNum(CheckpointIndex + 1);
-		CheckpointSpeeds.SetNum(CheckpointIndex + 1);
-	}
-	
-	CheckpointTimes[CheckpointIndex] = TimeStamp;
-	CheckpointSpeeds[CheckpointIndex] = CurrentSpeed;
-    
-	UE_LOG(LogTemp, Log, TEXT("Murmel %s -> Checkpoint %d | Zeit: %.2fs | Speed: %.2f cm/s"), 
-		*MarbleName, CheckpointIndex, TimeStamp, CurrentSpeed);
-}
-
 void AMarble::FinishRace(float TimeStamp, float FinishSpeed)
 {
 	if (bHasFinished || bIsEliminated) return;

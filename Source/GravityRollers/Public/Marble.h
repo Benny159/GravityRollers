@@ -117,12 +117,6 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race Stats")
 	float FinalRaceSpeed;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race Stats")
-	TArray<float> CheckpointTimes;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race Stats")
-	TArray<float> CheckpointSpeeds;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CostumPhysics")
 	float Size = 1.0f;
@@ -165,8 +159,6 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category="Race Logic")
 	void SetFrozen(bool bFrozen);
-	
-	void PassCheckpoint(int32 CheckpointIndex, float TimeStamp, float CurrentSpeed);
 	
 	void FinishRace(float TimeStamp, float FinishSpeed);
 	

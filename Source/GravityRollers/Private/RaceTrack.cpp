@@ -45,8 +45,6 @@ void ARaceTrack::BeginPlay()
 {
     Super::BeginPlay();
     
-    RegisterCheckpoints();
-    
     if (EndTrigger)
     {
         EndTrigger->OnComponentBeginOverlap.AddDynamic(this, &ARaceTrack::OnEndOverlap);
@@ -82,35 +80,6 @@ void ARaceTrack::InitialSpawnFromWorkbench()
     else
     {
         UE_LOG(LogTemp, Warning, TEXT("RaceTrack: Konnte keine Workbench für den Initial-Spawn finden!"));
-    }
-}
-
-void ARaceTrack::RegisterCheckpoints()
-{
-    Checkpoints.Empty();
-    
-    TArray<UChildActorComponent*> ChildComponents;
-    GetComponents<UChildActorComponent>(ChildComponents);
-
-    for (UChildActorComponent* ChildComp : ChildComponents)
-    {
-        ACheckpoint* FoundCheckpoint = Cast<ACheckpoint>(ChildComp->GetChildActor());
-        if (FoundCheckpoint)
-        {
-            Checkpoints.Add(FoundCheckpoint);
-        }
-    }
-    
-    Checkpoints.Sort([](const ACheckpoint& A, const ACheckpoint& B) {
-        return A.GetName() < B.GetName();
-    });
-    
-    for (int32 i = 0; i < Checkpoints.Num(); i++)
-    {
-        if (Checkpoints[i])
-        {
-            Checkpoints[i]->SetCheckpointIndex(i);
-        }
     }
 }
 
