@@ -69,6 +69,8 @@ protected:
 public:	
 	virtual void Tick(float DeltaTime) override;
 
+	FORCEINLINE UStaticMeshComponent* GetMesh() const { return MarbleMesh; }
+
 	virtual void NotifyActorOnClicked(FKey ButtonPressed = EKeys::LeftMouseButton) override;
 	
 	UFUNCTION(BlueprintCallable)

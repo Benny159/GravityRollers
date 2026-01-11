@@ -1,6 +1,7 @@
 #include "RaceTrack.h"
 #include "MarbleGameMode.h"
 #include "MarbleWorkbench.h"
+#include  "Fan.h"
 #include "Kismet/GameplayStatics.h"
 #include "MarblePlayerController.h"
 
@@ -114,6 +115,7 @@ void ARaceTrack::SetupRaceFromData(const TArray<FMarbleData>& MarblesData)
         }
     }
     ActiveMarbles.Empty();
+    
     for (const FMarbleData& Data : MarblesData)
     {
         int32 TargetLane = Data.PreferredLaneIndex;
@@ -156,6 +158,10 @@ void ARaceTrack::StartRace()
     {
         GM->StartRace(ActiveMarbles.Num());
     }
+    AFan* Fan = Cast<AFan>(
+        UGameplayStatics::GetActorOfClass(this, AFan::StaticClass())
+    );
+    Fan->ActiveMarbles = ActiveMarbles;
 }
 
 void ARaceTrack::ResetTrack()
@@ -226,7 +232,7 @@ void ARaceTrack::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other
 void ARaceTrack::OnEliminationZoneOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
     AMarble* Marble = Cast<AMarble>(OtherActor);
-    if (Marble)
+    if (Marble && !Marble->bIsEliminated)
     {
         UE_LOG(LogTemp, Warning, TEXT("Murmel ist rausgefallen: %s"), *Marble->GetName());
         
