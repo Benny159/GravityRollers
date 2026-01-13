@@ -14,17 +14,10 @@
   <component name="ChangeListManager">
     <list default="true" id="cffe6fa6-6a99-4fc2-acda-cadbe9bca3df" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GravityRollers/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GravityRollers/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_MarblePlayerController.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_MarblePlayerController.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_MarbleWorkbench.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_MarbleWorkbench.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_RaceTrack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_RaceTrack.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/WBP_MarbleDataLaptop.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/WBP_MarbleDataLaptop.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Level/Kidsroom.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Level/Kidsroom.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/UI/WBP_LaptopScreen.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/UI/WBP_LaptopScreen.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/UI/WBP_MainHUD.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/UI/WBP_MainHUD.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/UI/WBP_MarbleModifier.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/UI/WBP_MarbleModifier.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Private/Fan.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Private/Fan.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Private/Marble.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Private/Marble.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Private/MarbleWorkbench.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Private/MarbleWorkbench.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Private/MarbleGameMode.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Private/MarbleGameMode.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Private/RaceTrack.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Private/RaceTrack.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -226,7 +219,7 @@
       <workItem from="1768043580611" duration="5923000" />
       <workItem from="1768060410118" duration="9864000" />
       <workItem from="1768140588426" duration="8657000" />
-      <workItem from="1768318532663" duration="1580000" />
+      <workItem from="1768318532663" duration="8070000" />
     </task>
     <task id="LOCAL-00001" summary="[IMP]Logic for Checkpoints">
       <option name="closed" value="true" />
@@ -244,6 +237,9 @@
   </component>
   <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="UnrealLogPanelSettings">
+    <option name="showWarnings" value="false" />
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="[IMP]Logic for Checkpoints" />

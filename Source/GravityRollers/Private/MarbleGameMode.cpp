@@ -1,5 +1,7 @@
 #include "MarbleGameMode.h"
 #include "DataTrackerPlugin/DataTracker.h"
+#include "Dog.h"
+#include "Kismet/GameplayStatics.h"
 #include "MarblePlayerController.h"
 
 AMarbleGameMode::AMarbleGameMode()
@@ -102,6 +104,8 @@ void AMarbleGameMode::CheckRaceStatus()
         UE_LOG(LogTemp, Warning, TEXT("RENNEN BEENDET! Alle Murmeln sind durch."));
         GetMarblesSortedByRank();
         RaceEnded();
+        ADog* Dog = Cast<ADog>(UGameplayStatics::GetActorOfClass(this, ADog::StaticClass()));
+        Dog->StopShockLoop();
 
         AMarblePlayerController* PC = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());
         if (PC)

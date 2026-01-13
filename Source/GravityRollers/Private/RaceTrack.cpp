@@ -2,6 +2,7 @@
 #include "MarbleGameMode.h"
 #include "MarbleWorkbench.h"
 #include  "Fan.h"
+#include  "Dog.h"
 #include "Kismet/GameplayStatics.h"
 #include "MarblePlayerController.h"
 
@@ -161,6 +162,8 @@ void ARaceTrack::StartRace()
         UGameplayStatics::GetActorOfClass(this, AFan::StaticClass())
     );
     Fan->ActiveMarbles = ActiveMarbles;
+    ADog* Dog = Cast<ADog>(UGameplayStatics::GetActorOfClass(this, ADog::StaticClass()));
+    Dog->StartShockLoop();
 }
 
 void ARaceTrack::ResetTrack()
