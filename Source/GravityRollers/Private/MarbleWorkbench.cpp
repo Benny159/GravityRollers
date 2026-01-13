@@ -106,7 +106,6 @@ TArray<FMarbleData> AMarbleWorkbench::GetAllMarbleData() const
     {
         if (Marble)
         {
-            // Hier wird auch der StartingLaneIndex in das Struct kopiert!
             AllData.Add(Marble->GetMarbleData());
         }
     }

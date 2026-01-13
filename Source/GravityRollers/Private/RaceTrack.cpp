@@ -129,7 +129,6 @@ void ARaceTrack::SetupRaceFromData(const TArray<FMarbleData>& MarblesData)
             UE_LOG(LogTemp, Warning, TEXT("Ungültiger LaneIndex in Daten: %d"), TargetLane);
         }
     }
-    // Optional: Hier könnte man die Kamera initialisieren
 }
 
 void ARaceTrack::StartRace()

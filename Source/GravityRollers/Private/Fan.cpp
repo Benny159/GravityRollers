@@ -54,8 +54,8 @@ void AFan::Tick(float DeltaTime)
         for (AMarble* Marble : ActiveMarbles)
         {
             if (!IsValid(Marble)) continue;
+            if (Marble->bHasFinished || Marble->bIsEliminated) continue;
             
-            // Optional: Prüfen ob Tag existiert
             if (!Marble->ActorHasTag("RaceMarble")) 
             {
                 if(bShouldLog) UE_LOG(LogTemp, Warning, TEXT("Ignoriere %s (Kein 'RaceMarble' Tag)"), *Marble->GetName());
@@ -103,6 +103,5 @@ void AFan::ToggleFan()
 {
     bFanOn = !bFanOn;
     
-    // LOG 2: Zustandsänderung
     UE_LOG(LogTemp, Warning, TEXT("Fan wurde umgeschaltet. Neuer Status: %s"), bFanOn ? TEXT("AN") : TEXT("AUS"));
 }
