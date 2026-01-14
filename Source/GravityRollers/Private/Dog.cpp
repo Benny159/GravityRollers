@@ -93,9 +93,12 @@ void ADog::PerformShock()
     
     if (SeismicShakeClass)
     {
-        if (APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0))
+        APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
+        
+        if (PC)
         {
-            PC->ClientStartCameraShake(SeismicShakeClass, 1.0f);
+            PC->ClientStartCameraShake(SeismicShakeClass, 1.0f); 
+            UE_LOG(LogTemp, Warning, TEXT("!!! KAMERA SHAKE BEFEHL GESENDET !!!"));
         }
     }
     

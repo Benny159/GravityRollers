@@ -40,6 +40,7 @@ public:
 	UFUNCTION(BlueprintPure, Category = "Game State")
 	bool IsRaceActive() const { return bRaceIsActive; }
 
+	UFUNCTION(BlueprintCallable, Category = "Game State")
 	void SelectMarble(AMarble* NewMarble);
 	
 	UPROPERTY(BlueprintReadOnly)
