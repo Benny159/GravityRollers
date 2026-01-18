@@ -14,19 +14,13 @@
   <component name="ChangeListManager">
     <list default="true" id="cffe6fa6-6a99-4fc2-acda-cadbe9bca3df" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.GravityRollers/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.GravityRollers/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Config/DefaultEngine.ini" beforeDir="false" afterPath="$PROJECT_DIR$/Config/DefaultEngine.ini" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_Dog.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_Dog.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_Marble.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_Marble.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_MarbleGameMode.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_MarbleGameMode.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_MarbleWorkbench.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_MarbleWorkbench.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Blueprints/BP_RaceTrack.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/BP_RaceTrack.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/Blueprints/WBP_MarbleDataLaptop.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Blueprints/WBP_MarbleDataLaptop.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/Level/Kidsroom.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/Level/Kidsroom.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/OldBrickHouse/BluePrint_Actors/BP_OldBrickHouse.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/OldBrickHouse/BluePrint_Actors/BP_OldBrickHouse.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/UI/WBP_LaptopScreen.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/UI/WBP_LaptopScreen.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/UI/WBP_MainHUD.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/UI/WBP_MainHUD.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/UI/WBP_MarbleModifier.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/UI/WBP_MarbleModifier.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Private/Dog.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Private/Dog.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Public/MarblePlayerController.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Public/MarblePlayerController.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Source/GravityRollers/Private/MarbleWorkbench.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/GravityRollers/Private/MarbleWorkbench.cpp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -66,6 +60,7 @@
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Programs/UnrealBuildTool/Modes/PipInstallMode.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Core/Public/Misc/AssertionMacros.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Private/KismetTextLibrary.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Engine/Public/Animation/AnimTrace.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/Renderer/Private/DistortionRendering.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../../../../../Program Files/Epic Games/UE_5.6/Engine/Source/Runtime/TimeManagement/Private/TimeManagementBlueprintLibrary.cpp" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Source/GravityRollers/Private/Marble.cpp" root0="FORCE_HIGHLIGHTING" />
@@ -230,6 +225,7 @@
       <workItem from="1768318532663" duration="8070000" />
       <workItem from="1768412602666" duration="1822000" />
       <workItem from="1768415975297" duration="285000" />
+      <workItem from="1768739845574" duration="6977000" />
     </task>
     <task id="LOCAL-00001" summary="[IMP]Logic for Checkpoints">
       <option name="closed" value="true" />
