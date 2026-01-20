@@ -210,7 +210,7 @@ void ARaceTrack::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other
 {
     AMarble* Marble = Cast<AMarble>(OtherActor);
     
-    if (Marble && !Marble->bHasFinished)
+    if (Marble && !Marble->bHasFinished && !Marble->bIsEliminated)
     {
         float FinishTime = 0.0f;
         AMarbleGameMode* GM = Cast<AMarbleGameMode>(UGameplayStatics::GetGameMode(this));
@@ -234,7 +234,7 @@ void ARaceTrack::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other
 void ARaceTrack::OnEliminationZoneOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
     AMarble* Marble = Cast<AMarble>(OtherActor);
-    if (Marble && !Marble->bIsEliminated)
+    if (Marble && !Marble->bIsEliminated && !Marble->bHasFinished)
     {
         UE_LOG(LogTemp, Warning, TEXT("Murmel ist rausgefallen: %s"), *Marble->GetName());
         
@@ -243,6 +243,7 @@ void ARaceTrack::OnEliminationZoneOverlap(UPrimitiveComponent* OverlappedComp, A
         AMarbleGameMode* GM = Cast<AMarbleGameMode>(GetWorld()->GetAuthGameMode());
         if (GM)
         {
+            Marble->FinalRank = 99;
             GM->RegisterMarble(Marble);
             GM->RegisterMarbleEliminated();
         }

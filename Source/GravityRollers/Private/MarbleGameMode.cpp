@@ -26,15 +26,40 @@ void AMarbleGameMode::RegisterMarble(AMarble* NewMarble)
 
 TArray<AMarble*> AMarbleGameMode::GetMarblesSortedByRank()
 {
+    // 1. Bereinigen (Nullpointer entfernen)
     RacingMarbles.RemoveAll([](AMarble* Marble) {
         return Marble == nullptr || !IsValid(Marble);
     });
+
     TArray<AMarble*> SortedList = RacingMarbles;
     
+    // 2. Sortieren (Primär nach Rang)
     SortedList.Sort([](const AMarble& A, const AMarble& B)
     {
+        // Falls Ränge gleich sind (z.B. beide 99 oder beide 0), sekundär sortieren?
+        // Hier erstmal dein Original:
         return A.FinalRank < B.FinalRank;
     });
+
+    // --- DEBUG LOGGING ANFANG ---
+    UE_LOG(LogTemp, Warning, TEXT("============== MARBLE RANKING DEBUG =============="));
+    for (int32 i = 0; i < SortedList.Num(); i++)
+    {
+        AMarble* M = SortedList[i];
+        if (M)
+        {
+            // Wir loggen Name, Rang, Zeit und Status
+            UE_LOG(LogTemp, Warning, TEXT("#%d | Name: %s | Rank: %d | Time: %.2f | Eliminiert: %s"), 
+                i + 1, 
+                *M->GetName(), 
+                M->FinalRank, 
+                M->FinalRaceTime, 
+                M->bIsEliminated ? TEXT("JA") : TEXT("NEIN")
+            );
+        }
+    }
+    UE_LOG(LogTemp, Warning, TEXT("=================================================="));
+    // --- DEBUG LOGGING ENDE ---
 
     return SortedList;
 }
@@ -101,8 +126,8 @@ void AMarbleGameMode::CheckRaceStatus()
         RaceEndTime = GetWorld()->GetTimeSeconds();
 
         UE_LOG(LogTemp, Warning, TEXT("RENNEN BEENDET! Alle Murmeln sind durch."));
-        RaceEnded();
         GetMarblesSortedByRank();
+        RaceEnded();
         ADog* Dog = Cast<ADog>(UGameplayStatics::GetActorOfClass(this, ADog::StaticClass()));
         Dog->StopShockLoop();
 

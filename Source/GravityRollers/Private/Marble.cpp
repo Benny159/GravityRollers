@@ -220,7 +220,6 @@ void AMarble::Eliminate()
 	if (GM) 
 	{
 		CrashTime = GM->GetCurrentRaceTime();
-		GM->RegisterMarbleEliminated();
 	}
 	else 
 	{
