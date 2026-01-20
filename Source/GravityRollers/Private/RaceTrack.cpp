@@ -243,8 +243,8 @@ void ARaceTrack::OnEliminationZoneOverlap(UPrimitiveComponent* OverlappedComp, A
         AMarbleGameMode* GM = Cast<AMarbleGameMode>(GetWorld()->GetAuthGameMode());
         if (GM)
         {
-            GM->CheckRaceStatus();
             GM->RegisterMarble(Marble);
+            GM->RegisterMarbleEliminated();
         }
     }
 }

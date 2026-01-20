@@ -42,7 +42,6 @@ TArray<AMarble*> AMarbleGameMode::GetMarblesSortedByRank()
 void AMarbleGameMode::StartRace(int32 NumberOfMarbles)
 {
     ResetRaceState();
-    StartedEnded();
 
     TotalMarbles = NumberOfMarbles;
     bRaceActive = true;
@@ -102,8 +101,8 @@ void AMarbleGameMode::CheckRaceStatus()
         RaceEndTime = GetWorld()->GetTimeSeconds();
 
         UE_LOG(LogTemp, Warning, TEXT("RENNEN BEENDET! Alle Murmeln sind durch."));
-        GetMarblesSortedByRank();
         RaceEnded();
+        GetMarblesSortedByRank();
         ADog* Dog = Cast<ADog>(UGameplayStatics::GetActorOfClass(this, ADog::StaticClass()));
         Dog->StopShockLoop();
 

@@ -55,9 +55,6 @@ public:
     UFUNCTION(BlueprintImplementableEvent, Category = "Race Events")
     void RaceEnded();
 
-    UFUNCTION(BlueprintImplementableEvent, Category = "Race Events")
-    void StartedEnded();
-
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race State")
     bool bRaceActive;
 
