@@ -107,7 +107,6 @@ void AMarble::NotifyActorOnClicked(FKey ButtonPressed)
 void AMarble::SetSelected(bool bSelected)
 {
 	bIsSelected = bSelected;
-	// (Optional: Hier Material Glow an/aus)
 }
 
 void AMarble::UpdateSelectionVisuals(float DeltaTime)
@@ -138,6 +137,7 @@ FMarbleData AMarble::GetMarbleData() const
 	Data.FinalRaceTime= FinalRaceTime;
 	Data.FinalRaceSpeed = FinalRaceSpeed;
 	Data.FinalRank = FinalRank;
+	Data.MarbleColor = MarbleColor;
 
 	return Data;
 }
@@ -179,6 +179,21 @@ UPhysicalMaterial* AMarble::CreatePhysicsMaterial()
 	return PhysMat;
 }
 
+void AMarble::SetMarbleColor(FLinearColor NewColor)
+{
+	MarbleColor = NewColor;
+
+	if (MarbleMesh)
+	{
+		UMaterialInstanceDynamic* DynMat = MarbleMesh->CreateAndSetMaterialInstanceDynamic(0);
+        
+		if (DynMat)
+		{
+			DynMat->SetVectorParameterValue(FName("BaseColor"), NewColor);
+		}
+	}
+}
+
 void AMarble::InitializeFromData(const FMarbleData& Data)
 {
 	MarbleName = Data.MarbleName;
@@ -191,7 +206,9 @@ void AMarble::InitializeFromData(const FMarbleData& Data)
 	Restitution = Data.Restitution;
 	AngularDamping = Data.AngularDamping;
 	StartingLaneIndex = Data.PreferredLaneIndex;
-	
+	MarbleColor = Data.MarbleColor;
+
+	SetMarbleColor(Data.MarbleColor);
 	UpdatePhysicsProperties();
 }
 

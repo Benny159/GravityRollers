@@ -147,6 +147,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CostumPhysics")
 	float AngularDamping = 0.5f;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Appearance")
+	FLinearColor MarbleColor;
+	
+	UFUNCTION(BlueprintCallable, Category = "Appearance")
+	void SetMarbleColor(FLinearColor NewColor);
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CostumPhysics")
 	TEnumAsByte<EFrictionCombineMode::Type> FrictionCombineMode = EFrictionCombineMode::Min;
 

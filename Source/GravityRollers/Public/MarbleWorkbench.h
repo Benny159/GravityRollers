@@ -33,6 +33,10 @@ public:
     UPROPERTY(BlueprintReadOnly, Category = "Workbench Runtime")
     TArray<AMarble*> ConfigMarbles;
 
+    TArray<FLinearColor> MarbleColors;
+
+    void InitializeColors();
+
     UFUNCTION(BlueprintCallable, Category = "Data")
     TArray<FMarbleData> GetAllMarbleData() const;
 

@@ -30,7 +30,8 @@ AMarbleWorkbench::AMarbleWorkbench()
 void AMarbleWorkbench::BeginPlay()
 {
     Super::BeginPlay();
-
+    InitializeColors();
+    
     if (!MarbleClass) 
     {
         UE_LOG(LogTemp, Error, TEXT("Workbench: Keine MarbleClass gesetzt!"));
@@ -61,10 +62,25 @@ void AMarbleWorkbench::BeginPlay()
 
                 NewMarble->Tags.Add(FName("ConfigMarble"));
 
+                if (MarbleColors.IsValidIndex(i))
+                {
+                    NewMarble->SetMarbleColor(MarbleColors[i]); 
+                }
+
                 ConfigMarbles.Add(NewMarble);
             }
         }
     }
+}
+
+void AMarbleWorkbench::InitializeColors()
+{
+    MarbleColors.Empty();
+    MarbleColors.Add(FLinearColor(1.0f, 1.0f, 1.0f));
+    MarbleColors.Add(FLinearColor(0.0f, 0.0f, 1.0f));
+    MarbleColors.Add(FLinearColor(0.0f, 1.0f, 0.0f));
+    MarbleColors.Add(FLinearColor(1.0f, 0.0f, 0.0f));
+    MarbleColors.Add(FLinearColor(1.0f, 0.5f, 0.f));
 }
 
 void AMarbleWorkbench::SwapLaneAssignments(AMarble* TargetMarble, int32 DesiredLaneIndex)
