@@ -76,11 +76,11 @@ void AMarbleWorkbench::BeginPlay()
 void AMarbleWorkbench::InitializeColors()
 {
     MarbleColors.Empty();
-    MarbleColors.Add(FLinearColor(1.0f, 1.0f, 1.0f));
-    MarbleColors.Add(FLinearColor(0.0f, 0.0f, 1.0f));
+    MarbleColors.Add(FLinearColor(1.0f, 1.0f, 0.0f));
+    MarbleColors.Add(FLinearColor(0.0f, 1.0f, 1.0f));
     MarbleColors.Add(FLinearColor(0.0f, 1.0f, 0.0f));
     MarbleColors.Add(FLinearColor(1.0f, 0.0f, 0.0f));
-    MarbleColors.Add(FLinearColor(1.0f, 0.5f, 0.f));
+    MarbleColors.Add(FLinearColor(0.5f, 0.0f, 1.0f));
 }
 
 void AMarbleWorkbench::SwapLaneAssignments(AMarble* TargetMarble, int32 DesiredLaneIndex)

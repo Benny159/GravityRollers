@@ -93,12 +93,6 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	UStaticMeshComponent* MarbleMesh;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
-	UStaticMeshComponent* InnerCore;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
-	UParticleSystemComponent* TrailEffect;
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	USpringArmComponent* CameraBoom;
 

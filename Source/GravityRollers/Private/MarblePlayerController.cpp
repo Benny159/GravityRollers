@@ -85,6 +85,62 @@ void AMarblePlayerController::CycleToNextMarble()
     FocusOnMarble(CurrentViewIndex);
 }
 
+void AMarblePlayerController::SwitchToNextActiveMarble()
+{
+    TArray<AActor*> FoundMarbles;
+    UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("RaceMarble"), FoundMarbles);
+    
+    if (FoundMarbles.Num() == 0) return;
+    
+    FoundMarbles.Sort([](const AActor& A, const AActor& B) {
+        const AMarble* MA = Cast<AMarble>(&A);
+        const AMarble* MB = Cast<AMarble>(&B);
+        if (MA && MB)
+        {
+            return MA->StartingLaneIndex < MB->StartingLaneIndex;
+        }
+        return false;
+    });
+    
+    int32 CurrentListIndex = -1;
+
+    if (CurrentViewedMarble)
+    {
+        for (int32 i = 0; i < FoundMarbles.Num(); i++)
+        {
+            if (FoundMarbles[i] == CurrentViewedMarble)
+            {
+                CurrentListIndex = i;
+                break;
+            }
+        }
+    }
+    
+    for (int32 i = 1; i < FoundMarbles.Num() + 1; i++)
+    {
+        int32 CheckIndex = (CurrentListIndex + i) % FoundMarbles.Num();
+        
+        AMarble* Candidate = Cast<AMarble>(FoundMarbles[CheckIndex]);
+
+        if (Candidate && IsValid(Candidate))
+        {
+            if (!Candidate->bIsEliminated && !Candidate->bHasFinished)
+            {
+                UE_LOG(LogTemp, Log, TEXT("Auto-Switch auf aktive Murmel: %s (Lane: %d)"), 
+                    *Candidate->GetName(), Candidate->StartingLaneIndex);
+                
+                FocusOnMarble(Candidate->StartingLaneIndex);
+                
+                CurrentViewIndex = Candidate->StartingLaneIndex;
+                CurrentViewedMarble = Candidate;
+                return;
+            }
+        }
+    }
+    
+    UE_LOG(LogTemp, Warning, TEXT("Keine weiteren aktiven Murmeln gefunden (Rennen vorbei?)"));
+}
+
 void AMarblePlayerController::ViewMarble1() { FocusOnMarble(0); CurrentViewIndex = 0; }
 void AMarblePlayerController::ViewMarble2() { FocusOnMarble(1); CurrentViewIndex = 1; }
 void AMarblePlayerController::ViewMarble3() { FocusOnMarble(2); CurrentViewIndex = 2; }
@@ -179,7 +235,7 @@ void AMarblePlayerController::FocusOnMarble(int32 MarbleIndex)
     if (TargetMarble)
     {
         CurrentViewedMarble = TargetMarble;
-        SetViewTargetWithBlend(TargetMarble, 0.5f, EViewTargetBlendFunction::VTBlend_Cubic);
+        SetViewTargetWithBlend(TargetMarble, 1.5f, EViewTargetBlendFunction::VTBlend_Cubic);
     }
 }
 

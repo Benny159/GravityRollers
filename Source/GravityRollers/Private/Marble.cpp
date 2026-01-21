@@ -18,13 +18,6 @@ AMarble::AMarble()
 	RootComponent = MarbleMesh;
 	MarbleMesh->SetSimulatePhysics(true);
 	
-	InnerCore = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("InnerCore"));
-	InnerCore->SetupAttachment(MarbleMesh);
-	InnerCore->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	
-	TrailEffect = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("TrailEffect"));
-	TrailEffect->SetupAttachment(MarbleMesh);
-	
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
 	CameraBoom->SetUsingAbsoluteRotation(true); 

@@ -122,6 +122,33 @@ void AMarbleGameMode::CheckRaceStatus()
     }
 }
 
+void AMarbleGameMode::ForceEndRace()
+{
+    if (!bRaceActive) return;
+
+    UE_LOG(LogTemp, Warning, TEXT("FORCE END RACE: Time-Out! Bereinige verbleibende Murmeln..."));
+    
+    TArray<AActor*> FoundMarbles;
+    UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("RaceMarble"), FoundMarbles);
+
+    for (AActor* Actor : FoundMarbles)
+    {
+        AMarble* Marble = Cast<AMarble>(Actor);
+        if (Marble && IsValid(Marble))
+        {
+            if (!Marble->bHasFinished && !Marble->bIsEliminated)
+            {
+                Marble->Eliminate();
+                
+                Marble->FinalRank = 99;
+                
+                RegisterMarble(Marble);
+                RegisterMarbleEliminated();
+            }
+        }
+    }
+}
+
 void AMarbleGameMode::Tick(float DeltaSeconds)
 {
     Super::Tick(DeltaSeconds);

@@ -228,6 +228,11 @@ void ARaceTrack::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* Other
             GM->RegisterMarble(Marble);
             GM->RegisterMarbleFinished();
         }
+        AMarblePlayerController* PC = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());
+        if (PC && Marble == PC->CurrentViewedMarble)
+        {
+            PC->SwitchToNextActiveMarble();
+        }
     }
 }
 
@@ -246,6 +251,11 @@ void ARaceTrack::OnEliminationZoneOverlap(UPrimitiveComponent* OverlappedComp, A
             Marble->FinalRank = 99;
             GM->RegisterMarble(Marble);
             GM->RegisterMarbleEliminated();
+        }
+        AMarblePlayerController* PC = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());
+        if (PC && Marble == PC->CurrentViewedMarble)
+        {
+            PC->SwitchToNextActiveMarble();
         }
     }
 }
