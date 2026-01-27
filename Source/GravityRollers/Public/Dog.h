@@ -58,6 +58,9 @@ public:
 private:
     FTimerHandle TimerHandle_NextShock;
     FTimerHandle TimerHandle_ResetAnim;
+    FTimerHandle TimerHandle_ShockDelay;
+    
+    void ApplyShockEffects();
     
     void ScheduleNextShock();
     void PerformShock();

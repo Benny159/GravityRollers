@@ -91,33 +91,14 @@ void ADog::PerformShock()
     
     if (BarkAudio) BarkAudio->Play();
     
-    if (SeismicShakeClass)
-    {
-        APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
-        
-        if (PC)
-        {
-            PC->ClientStartCameraShake(SeismicShakeClass, 1.0f); 
-            UE_LOG(LogTemp, Warning, TEXT("!!! KAMERA SHAKE BEFEHL GESENDET !!!"));
-        }
-    }
-    
-    UpdateMarbleCache();
-    int32 HitCount = 0;
-    for (AMarble* Marble : CachedMarbles)
-    {
-        if (IsValid(Marble) && Marble->GetMesh() && Marble->GetMesh()->IsSimulatingPhysics())
-        {
-            FVector ShakeDir = FMath::VRand();
-            ShakeDir.Z = 2.5f;
-            ShakeDir.Normalize();
-            Marble->GetMesh()->AddImpulse(ShakeDir * ShockStrength, NAME_None, true);
-            HitCount++;
-        }
-    }
+    GetWorld()->GetTimerManager().SetTimer(
+        TimerHandle_ShockDelay, 
+        this, 
+        &ADog::ApplyShockEffects, 
+        0.5f,
+        false
+    );
 
-    UE_LOG(LogTemp, Log, TEXT("Hund: WUFF! (Erdbeben ausgelöst bei %d Murmeln)"), HitCount);
-    
     GetWorld()->GetTimerManager().SetTimer(
         TimerHandle_ResetAnim, 
         this, 
@@ -125,6 +106,36 @@ void ADog::PerformShock()
         1.5f,
         false
     );
+}
+
+void ADog::ApplyShockEffects()
+{
+    if (SeismicShakeClass)
+    {
+        APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
+        if (PC)
+        {
+            PC->ClientStartCameraShake(SeismicShakeClass, 1.0f); 
+        }
+    }
+    
+    UpdateMarbleCache();
+    int32 HitCount = 0;
+    
+    for (AMarble* Marble : CachedMarbles)
+    {
+        if (IsValid(Marble) && Marble->GetMesh() && Marble->GetMesh()->IsSimulatingPhysics())
+        {
+            FVector ShakeDir = FMath::VRand();
+            ShakeDir.Z = 2.5f;
+            ShakeDir.Normalize();
+            
+            Marble->GetMesh()->AddImpulse(ShakeDir * ShockStrength, NAME_None, true);
+            HitCount++;
+        }
+    }
+
+    UE_LOG(LogTemp, Log, TEXT("Hund: WUMMS! (Erdbeben verzögert ausgelöst bei %d Murmeln)"), HitCount);
 }
 
 void ADog::ResetToIdle()

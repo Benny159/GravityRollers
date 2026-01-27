@@ -85,6 +85,11 @@ void AMarblePlayerController::CycleToNextMarble()
     FocusOnMarble(CurrentViewIndex);
 }
 
+void AMarblePlayerController::UnlockCameraSwitch()
+{
+    bIsCameraSwitching = false;
+}
+
 void AMarblePlayerController::SwitchToNextActiveMarble()
 {
     TArray<AActor*> FoundMarbles;
@@ -157,7 +162,7 @@ void AMarblePlayerController::SwitchToRaceView()
     AActor* RaceCam = FindCameraByTag(FName("RaceCam"));
     if (RaceCam)
     {
-        SetViewTargetWithBlend(RaceCam, 1.5f, EViewTargetBlendFunction::VTBlend_EaseInOut, 2.0f);
+        SetViewTargetWithBlend(RaceCam, 0.8f, EViewTargetBlendFunction::VTBlend_EaseInOut, 2.0f);
     }
 }
 
@@ -166,7 +171,7 @@ void AMarblePlayerController::SwitchToAnalysView()
     AActor* AnalyseCam = FindCameraByTag(FName("AnalyseCam"));
     if (AnalyseCam)
     {
-        SetViewTargetWithBlend(AnalyseCam, 2.0f, EViewTargetBlendFunction::VTBlend_EaseInOut, 2.0f);
+        SetViewTargetWithBlend(AnalyseCam, 0.8f, EViewTargetBlendFunction::VTBlend_EaseInOut, 2.0f);
     }
     bRaceIsActive = false;
 }
@@ -196,7 +201,7 @@ void AMarblePlayerController::SwitchToConfigViewFromRace(FVector LastCameraLocat
     
     if (ConfigCam) 
     {
-        SetViewTargetWithBlend(ConfigCam, 1.5f, EViewTargetBlendFunction::VTBlend_EaseInOut, 2.0f);
+        SetViewTargetWithBlend(ConfigCam, 0.8f, EViewTargetBlendFunction::VTBlend_EaseInOut, 2.0f);
     }
     
     GetWorld()->GetTimerManager().SetTimer(TimerHandle_CleanupGhost, this, &AMarblePlayerController::CleanupGhostCamera, 2.0f, false);
@@ -215,7 +220,7 @@ void AMarblePlayerController::CleanupGhostCamera()
 
 void AMarblePlayerController::FocusOnMarble(int32 MarbleIndex)
 {
-    if (!bRaceIsActive) return;
+    if (!bRaceIsActive || bIsCameraSwitching) return;
     
     TArray<AActor*> FoundMarbles;
     UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("RaceMarble"), FoundMarbles);
@@ -234,8 +239,16 @@ void AMarblePlayerController::FocusOnMarble(int32 MarbleIndex)
     
     if (TargetMarble)
     {
+        bIsCameraSwitching = true;
         CurrentViewedMarble = TargetMarble;
-        SetViewTargetWithBlend(TargetMarble, 1.5f, EViewTargetBlendFunction::VTBlend_Cubic);
+        SetViewTargetWithBlend(TargetMarble, 0.8f, EViewTargetBlendFunction::VTBlend_Cubic);
+        GetWorld()->GetTimerManager().SetTimer(
+       TimerHandle_CameraCooldown, 
+       this, 
+       &AMarblePlayerController::UnlockCameraSwitch, 
+       0.8f,
+       false
+       );
     }
 }
 

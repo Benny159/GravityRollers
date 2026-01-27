@@ -80,4 +80,10 @@ private:
 	void ViewMarble5();
 
 	void CycleToNextMarble();
+	
+	bool bIsCameraSwitching = false;
+	
+	FTimerHandle TimerHandle_CameraCooldown;
+	
+	void UnlockCameraSwitch();
 };
