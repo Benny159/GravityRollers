@@ -1,262 +1,314 @@
+// Copyright (c) 2026 Gravity Rollers. All Rights Reserved.
+
 #include "RaceTrack.h"
+#include "Marble.h"
 #include "MarbleGameMode.h"
 #include "MarbleWorkbench.h"
-#include  "Fan.h"
-#include  "Dog.h"
-#include "Kismet/GameplayStatics.h"
 #include "MarblePlayerController.h"
+#include "Fan.h"
+#include "Dog.h"
+#include "Components/BoxComponent.h"
+#include "Components/ArrowComponent.h"
+#include "Components/StaticMeshComponent.h"
+#include "Camera/CameraComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 ARaceTrack::ARaceTrack()
 {
-    PrimaryActorTick.bCanEverTick = false;
-    
-    TrackMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TrackMesh"));
-    RootComponent = TrackMesh;
-    
-    StartButton = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StartButton"));
-    StartButton->SetupAttachment(RootComponent);
-    
-    EndTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("EndTrigger"));
-    EndTrigger->SetupAttachment(RootComponent);
-    EndTrigger->SetBoxExtent(FVector(100.f, 500.f, 100.f));
-    EndTrigger->SetCollisionProfileName(TEXT("Trigger"));
+	PrimaryActorTick.bCanEverTick = false;
 
-    EliminationZone = CreateDefaultSubobject<UBoxComponent>(TEXT("EliminationZone"));
-    EliminationZone->SetupAttachment(RootComponent);
-    EliminationZone->SetBoxExtent(FVector(5000.f, 2000.f, 100.f)); // Groß genug machen!
-    EliminationZone->SetRelativeLocation(FVector(0.f, 0.f, -1000.f)); // Tief unter der Strecke
-    EliminationZone->SetCollisionProfileName(TEXT("Trigger"));
-    
-    StartPointsRoot = CreateDefaultSubobject<USceneComponent>(TEXT("StartPointsRoot"));
-    StartPointsRoot->SetupAttachment(RootComponent);
+	// Component Setup
+	TrackMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TrackMesh"));
+	RootComponent = TrackMesh;
+	
+	StartButton = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("StartButton"));
+	StartButton->SetupAttachment(RootComponent);
+	
+	EndTrigger = CreateDefaultSubobject<UBoxComponent>(TEXT("EndTrigger"));
+	EndTrigger->SetupAttachment(RootComponent);
+	EndTrigger->SetBoxExtent(FVector(100.f, 500.f, 100.f));
+	EndTrigger->SetCollisionProfileName(TEXT("Trigger"));
 
-    for (int32 i = 0; i < 5; i++)
-    {
-        FString Name = FString::Printf(TEXT("StartPosition_%d"), i + 1);
-        UArrowComponent* Arrow = CreateDefaultSubobject<UArrowComponent>(*Name);
-        Arrow->SetupAttachment(StartPointsRoot);
-        
-        Arrow->SetRelativeLocation(FVector(0, i * 150.0f, 50.0f)); 
-        StartPositions.Add(Arrow);
-    }
+	EliminationZone = CreateDefaultSubobject<UBoxComponent>(TEXT("EliminationZone"));
+	EliminationZone->SetupAttachment(RootComponent);
+	EliminationZone->SetBoxExtent(FVector(5000.f, 2000.f, 100.f)); 
+	EliminationZone->SetRelativeLocation(FVector(0.f, 0.f, -1000.f)); 
+	EliminationZone->SetCollisionProfileName(TEXT("Trigger"));
+	
+	StartPointsRoot = CreateDefaultSubobject<USceneComponent>(TEXT("StartPointsRoot"));
+	StartPointsRoot->SetupAttachment(RootComponent);
 
-    bRaceStarted = false;
+	CreateStartPositions();
+
+	// Default value
+	bRaceStarted = false;
+}
+
+void ARaceTrack::CreateStartPositions()
+{
+	for (int32 i = 0; i < 5; i++)
+	{
+		const FString ArrowName = FString::Printf(TEXT("StartPosition_%d"), i + 1);
+		TObjectPtr<UArrowComponent> Arrow = CreateDefaultSubobject<UArrowComponent>(*ArrowName);
+		if (Arrow)
+		{
+			Arrow->SetupAttachment(StartPointsRoot);
+			Arrow->SetRelativeLocation(FVector(0, i * 150.0f, 50.0f)); 
+			StartPositions.Add(Arrow);
+		}
+	}
 }
 
 void ARaceTrack::BeginPlay()
 {
-    Super::BeginPlay();
-    
-    if (EndTrigger)
-    {
-        EndTrigger->OnComponentBeginOverlap.AddDynamic(this, &ARaceTrack::OnEndOverlap);
-    }
+	Super::BeginPlay();
+	
+	CacheGameReferences();
 
-    if (EliminationZone)
-    {
-        EliminationZone->OnComponentBeginOverlap.AddDynamic(this, &ARaceTrack::OnEliminationZoneOverlap);
-    }
+	if (EndTrigger)
+	{
+		EndTrigger->OnComponentBeginOverlap.AddDynamic(this, &ARaceTrack::OnEndOverlap);
+	}
 
-    FTimerHandle UnusedHandle;
-    GetWorld()->GetTimerManager().SetTimer(
-        UnusedHandle, 
-        this, 
-        &ARaceTrack::InitialSpawnFromWorkbench, 
-        0.2f,
-        false
-    );
+	if (EliminationZone)
+	{
+		EliminationZone->OnComponentBeginOverlap.AddDynamic(this, &ARaceTrack::OnEliminationZoneOverlap);
+	}
+
+	// Delay Spawn to be sure, the Workbench has the MarbleDatas 
+	FTimerHandle InitTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(
+		InitTimerHandle, 
+		this, 
+		&ARaceTrack::InitialSpawnFromWorkbench, 
+		0.2f,
+		false
+	);
+}
+
+void ARaceTrack::CacheGameReferences()
+{
+	MarbleGameMode = Cast<AMarbleGameMode>(UGameplayStatics::GetGameMode(this));
+	MarblePlayerController = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());
+
+	if (!MarbleGameMode)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ARaceTrack: Failed to cache MarbleGameMode!"));
+	}
+	if (!MarblePlayerController)
+	{
+		UE_LOG(LogTemp, Error, TEXT("ARaceTrack: Failed to cache MarblePlayerController!"));
+	}
 }
 
 void ARaceTrack::InitialSpawnFromWorkbench()
 {
-    AMarbleWorkbench* Workbench = Cast<AMarbleWorkbench>(
-        UGameplayStatics::GetActorOfClass(this, AMarbleWorkbench::StaticClass())
-    );
+	AMarbleWorkbench* Workbench = Cast<AMarbleWorkbench>(
+		UGameplayStatics::GetActorOfClass(this, AMarbleWorkbench::StaticClass())
+	);
 
-    if (Workbench)
-    {
-        TArray<FMarbleData> InitialData = Workbench->GetAllMarbleData();
-        SetupRaceFromData(InitialData);
-        UE_LOG(LogTemp, Log, TEXT("RaceTrack: Initial-Spawn von Workbench erfolgreich. %d Murmeln gesetzt."), InitialData.Num());
-    }
-    else
-    {
-        UE_LOG(LogTemp, Warning, TEXT("RaceTrack: Konnte keine Workbench für den Initial-Spawn finden!"));
-    }
+	if (Workbench)
+	{
+		const TArray<FMarbleData> InitialData = Workbench->GetAllMarbleData();
+		SetupRaceFromData(InitialData);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("RaceTrack: Could not find Workbench for initial spawn!"));
+	}
 }
 
-void ARaceTrack::SpawnMarble(TSubclassOf<AMarble> MarbleClass, int32 LaneIndex, const FMarbleData& MarbleData)
+void ARaceTrack::SpawnMarble(TSubclassOf<AMarble> MarbleClass, int32 LaneIndex, const FMarbleData& InMarbleData)
 {
-    if (!MarbleClass || !StartPositions.IsValidIndex(LaneIndex)) return;
+	if (!MarbleClass || !StartPositions.IsValidIndex(LaneIndex) || !StartPositions[LaneIndex]) 
+	{
+		return;
+	}
 
-    FTransform SpawnTransform = StartPositions[LaneIndex]->GetComponentTransform();
-    FActorSpawnParameters SpawnParams;
-    SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+	const FTransform SpawnTransform = StartPositions[LaneIndex]->GetComponentTransform();
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 
-    AMarble* NewMarble = GetWorld()->SpawnActor<AMarble>(MarbleClass, SpawnTransform, SpawnParams);
+	AMarble* NewMarble = GetWorld()->SpawnActor<AMarble>(MarbleClass, SpawnTransform, SpawnParams);
 
-    if (NewMarble)
-    {
-        NewMarble->InitializeFromData(MarbleData);
-        NewMarble->Tags.Add(FName("RaceMarble"));
-        
-        NewMarble->SetFrozen(true); 
+	if (NewMarble)
+	{
+		NewMarble->InitializeFromData(InMarbleData);
+		NewMarble->Tags.Add(FName("RaceMarble"));
+		NewMarble->SetFrozen(true); 
 
-        ActiveMarbles.Add(NewMarble);
-    }
+		ActiveMarbles.Add(NewMarble);
+	}
 }
 
 void ARaceTrack::SetupRaceFromData(const TArray<FMarbleData>& MarblesData)
 {
-    for (AMarble* Marble : ActiveMarbles)
-    {
-        if (Marble && IsValid(Marble))
-        {
-            Marble->Destroy();
-        }
-    }
-    ActiveMarbles.Empty();
-    
-    for (const FMarbleData& Data : MarblesData)
-    {
-        int32 TargetLane = Data.PreferredLaneIndex;
-        
-        if (StartPositions.IsValidIndex(TargetLane))
-        {
-            SpawnMarble(RaceMarbleClass, TargetLane, Data); 
-        }
-        else
-        {
-            UE_LOG(LogTemp, Warning, TEXT("Ungültiger LaneIndex in Daten: %d"), TargetLane);
-        }
-    }
+	for (AMarble* Marble : ActiveMarbles)
+	{
+		if (IsValid(Marble))
+		{
+			Marble->Destroy();
+		}
+	}
+	ActiveMarbles.Empty();
+	
+	for (const FMarbleData& Data : MarblesData)
+	{
+		const int32 TargetLane = Data.PreferredLaneIndex;
+		
+		if (StartPositions.IsValidIndex(TargetLane))
+		{
+			SpawnMarble(RaceMarbleClass, TargetLane, Data); 
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Invalid LaneIndex in Data: %d"), TargetLane);
+		}
+	}
 }
 
 void ARaceTrack::StartRace()
 {
-    if (bRaceStarted) return;
-    bRaceStarted = true;
+	if (bRaceStarted)
+	{
+		return;
+	}
+	
+	bRaceStarted = true;
 
-    for (AMarble* Marble : ActiveMarbles)
-    {
-        if (Marble)
-        {
-            Marble->SetFrozen(false);
-        }
-    }
+	for (AMarble* Marble : ActiveMarbles)
+	{
+		if (Marble)
+		{
+			Marble->SetFrozen(false);
+		}
+	}
+	
+	if (MarblePlayerController)
+	{
+		MarblePlayerController->SetRaceState(true);
+		MarblePlayerController->FocusOnMarble(0);
+		
+		if (MarblePlayerController->CurrentSelectedMarble)
+		{
+			MarblePlayerController->SelectMarble(MarblePlayerController->CurrentSelectedMarble);
+		}
+	}
+	
+	if (MarbleGameMode)
+	{
+		MarbleGameMode->StartRace(ActiveMarbles.Num());
+	}
 
-    AMarblePlayerController* PC = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());
-    if (PC)
-    {
-        PC->SetRaceState(true);
-        PC->FocusOnMarble(0);
-        PC->SelectMarble(PC->CurrentSelectedMarble);
-    }
-    
-    AMarbleGameMode* GM = Cast<AMarbleGameMode>(UGameplayStatics::GetGameMode(this));
-    if (GM)
-    {
-        GM->StartRace(ActiveMarbles.Num());
-    }
-    AFan* Fan = Cast<AFan>(
-        UGameplayStatics::GetActorOfClass(this, AFan::StaticClass())
-    );
-    Fan->ActiveMarbles = ActiveMarbles;
-    ADog* Dog = Cast<ADog>(UGameplayStatics::GetActorOfClass(this, ADog::StaticClass()));
-    Dog->StartShockLoop();
+	AFan* Fan = Cast<AFan>(UGameplayStatics::GetActorOfClass(this, AFan::StaticClass()));
+	if (Fan)
+	{
+		Fan->ActiveMarbles = ActiveMarbles;
+	}
+
+	ADog* Dog = Cast<ADog>(UGameplayStatics::GetActorOfClass(this, ADog::StaticClass()));
+	if (Dog)
+	{
+		Dog->StartShockLoop();
+	}
 }
 
 void ARaceTrack::ResetTrack()
 {
-    bRaceStarted = false;
+	bRaceStarted = false;
 
-    AMarblePlayerController* PC = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());
-    if (PC)
-    {
-        if (PC->IsRaceActive())
-        {
-            UCameraComponent* Cam = PC->CurrentViewedMarble->FollowCamera;
-            PC->SwitchToConfigViewFromRace(Cam->GetComponentLocation(),Cam->GetComponentRotation());
-        }
-        else
-        {
-            PC->SwitchToConfigView();
-        }
-        PC->SetRaceState(false);
-    }
-    
-    for (AMarble* Marble : ActiveMarbles)
-    {
-        if (Marble && IsValid(Marble))
-        {
-            Marble->Destroy();
-        }
-    }
-    ActiveMarbles.Empty();
-    AMarbleGameMode* GM = Cast<AMarbleGameMode>(UGameplayStatics::GetGameMode(this));
-    if (GM)
-    {
-        GM->ResetRaceState();
-    }
-    AMarbleWorkbench* Workbench = Cast<AMarbleWorkbench>(
-        UGameplayStatics::GetActorOfClass(this, AMarbleWorkbench::StaticClass())
-    );
-    SetupRaceFromData(Workbench->GetAllMarbleData());
+	if (MarblePlayerController)
+	{
+		if (MarblePlayerController->IsRaceActive() && 
+			MarblePlayerController->CurrentViewedMarble && 
+			MarblePlayerController->CurrentViewedMarble->FollowCamera)
+		{
+			UCameraComponent* Cam = MarblePlayerController->CurrentViewedMarble->FollowCamera;
+			MarblePlayerController->SwitchToConfigViewFromRace(Cam->GetComponentLocation(), Cam->GetComponentRotation());
+		}
+		else
+		{
+			MarblePlayerController->SwitchToConfigView();
+		}
+		MarblePlayerController->SetRaceState(false);
+	}
+	
+	for (AMarble* Marble : ActiveMarbles)
+	{
+		if (IsValid(Marble))
+		{
+			Marble->Destroy();
+		}
+	}
+	ActiveMarbles.Empty();
 
-    UE_LOG(LogTemp, Log, TEXT("RaceTrack zurückgesetzt."));
+	if (MarbleGameMode)
+	{
+		MarbleGameMode->ResetRaceState();
+	}
+
+	AMarbleWorkbench* Workbench = Cast<AMarbleWorkbench>(
+		UGameplayStatics::GetActorOfClass(this, AMarbleWorkbench::StaticClass())
+	);
+	
+	if (Workbench)
+	{
+		SetupRaceFromData(Workbench->GetAllMarbleData());
+	}
 }
 
 void ARaceTrack::OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    AMarble* Marble = Cast<AMarble>(OtherActor);
-    
-    if (Marble && !Marble->bHasFinished && !Marble->bIsEliminated)
-    {
-        float FinishTime = 0.0f;
-        AMarbleGameMode* GM = Cast<AMarbleGameMode>(UGameplayStatics::GetGameMode(this));
-        
-        if (GM) FinishTime = GM->GetCurrentRaceTime();
-        else FinishTime = GetWorld()->GetTimeSeconds();
+	AMarble* Marble = Cast<AMarble>(OtherActor);
+	
+	if (Marble && !Marble->bHasFinished && !Marble->bIsEliminated)
+	{
+		float FinishTime = 0.0f;
+		
+		if (MarbleGameMode)
+		{
+			FinishTime = MarbleGameMode->GetCurrentRaceTime();
+		}
+		else
+		{
+			FinishTime = GetWorld()->GetTimeSeconds();
+		}
 
-        float FinishSpeed = Marble->GetVelocity().Size();
-        
-        Marble->FinishRace(FinishTime, FinishSpeed);
-        
-        if (GM)
-        {
-            Marble->FinalRank = GM->FinishedCount+1;
-            GM->RegisterMarble(Marble);
-            GM->RegisterMarbleFinished();
-        }
-        AMarblePlayerController* PC = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());
-        if (PC && Marble == PC->CurrentViewedMarble)
-        {
-            PC->SwitchToNextActiveMarble();
-        }
-    }
+		const float FinishSpeed = Marble->GetVelocity().Size();
+		
+		Marble->FinishRace(FinishTime, FinishSpeed);
+		
+		if (MarbleGameMode)
+		{
+			Marble->FinalRank = MarbleGameMode->FinishedCount + 1;
+			MarbleGameMode->RegisterMarble(Marble);
+			MarbleGameMode->RegisterMarbleFinished();
+		}
+
+		if (MarblePlayerController && Marble == MarblePlayerController->CurrentViewedMarble)
+		{
+			MarblePlayerController->SwitchToNextActiveMarble();
+		}
+	}
 }
 
 void ARaceTrack::OnEliminationZoneOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-    AMarble* Marble = Cast<AMarble>(OtherActor);
-    if (Marble && !Marble->bIsEliminated && !Marble->bHasFinished)
-    {
-        UE_LOG(LogTemp, Warning, TEXT("Murmel ist rausgefallen: %s"), *Marble->GetName());
-        
-        Marble->Eliminate();
-        
-        AMarbleGameMode* GM = Cast<AMarbleGameMode>(GetWorld()->GetAuthGameMode());
-        if (GM)
-        {
-            Marble->FinalRank = 99;
-            GM->RegisterMarble(Marble);
-            GM->RegisterMarbleEliminated();
-        }
-        AMarblePlayerController* PC = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());
-        if (PC && Marble == PC->CurrentViewedMarble)
-        {
-            PC->SwitchToNextActiveMarble();
-        }
-    }
-}
+	AMarble* Marble = Cast<AMarble>(OtherActor);
+	if (Marble && !Marble->bIsEliminated && !Marble->bHasFinished)
+	{
+		Marble->Eliminate();
+		
+		if (MarbleGameMode)
+		{
+			Marble->FinalRank = 99;
+			MarbleGameMode->RegisterMarble(Marble);
+			MarbleGameMode->RegisterMarbleEliminated();
+		}
 
+		if (MarblePlayerController && Marble == MarblePlayerController->CurrentViewedMarble)
+		{
+			MarblePlayerController->SwitchToNextActiveMarble();
+		}
+	}
+}

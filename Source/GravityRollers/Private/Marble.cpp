@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Gravity Rollers. All Rights Reserved.
+
 #include "Marble.h"
 #include "MarbleGameMode.h"
 #include "MarblePlayerController.h"
@@ -109,10 +111,10 @@ void AMarble::NotifyActorOnClicked(FKey ButtonPressed)
 		return;
 	}
 	
-	AMarblePlayerController* PC = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());
-	if (PC)
+	AMarblePlayerController* MarblePlayerController = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());
+	if (MarblePlayerController)
 	{
-		PC->SelectMarble(this);
+		MarblePlayerController->SelectMarble(this);
 	}
 }
 
@@ -234,7 +236,8 @@ void AMarble::FinishRace(float TimeStamp, float FinishSpeed)
 	bHasFinished = true;
 	FinalRaceTime = TimeStamp;
 	FinalRaceSpeed = FinishSpeed / ScaleFactor;
-	
+
+	//Slow down Marble
 	if (MarbleMesh)
 	{
 		MarbleMesh->SetLinearDamping(2.0f);
@@ -252,9 +255,9 @@ void AMarble::Eliminate()
 	const float CrashSpeed = GetVelocity().Size() / ScaleFactor;
 	float CrashTime = GetWorld()->GetTimeSeconds();
 
-	if (AMarbleGameMode* GM = Cast<AMarbleGameMode>(UGameplayStatics::GetGameMode(this)))
+	if (AMarbleGameMode* MarbleGameMode = Cast<AMarbleGameMode>(UGameplayStatics::GetGameMode(this)))
 	{
-		CrashTime = GM->GetCurrentRaceTime();
+		CrashTime = MarbleGameMode->GetCurrentRaceTime();
 	}
 
 	bIsEliminated = true;
