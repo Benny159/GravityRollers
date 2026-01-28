@@ -75,7 +75,7 @@ void ARaceTrack::BeginPlay()
 		EliminationZone->OnComponentBeginOverlap.AddDynamic(this, &ARaceTrack::OnEliminationZoneOverlap);
 	}
 
-	// Delay Spawn to be sure, the Workbench has the MarbleDatas 
+	// Delay Spawn to be sure the Workbench has the MarbleDatas 
 	FTimerHandle InitTimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(
 		InitTimerHandle, 

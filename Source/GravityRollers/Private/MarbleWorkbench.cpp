@@ -1,129 +1,141 @@
-#include "MarbleWorkbench.h"
+// Copyright (c) 2026 Gravity Rollers. All Rights Reserved.
 
-#include <string>
+#include "MarbleWorkbench.h"
+#include "Marble.h"
+#include "Components/ArrowComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 AMarbleWorkbench::AMarbleWorkbench()
 {
-    PrimaryActorTick.bCanEverTick = false;
-    
-    BoardMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BoardMesh"));
-    RootComponent = BoardMesh;
+	PrimaryActorTick.bCanEverTick = false;
+	
+	BoardMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BoardMesh"));
+	RootComponent = BoardMesh;
 
-    SlotsRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SlotsRoot"));
-    SlotsRoot->SetupAttachment(BoardMesh);
-    
-    for (int32 i = 0; i < 5; i++)
-    {
-        FString ArrowName = FString::Printf(TEXT("SlotArrow_%d"), i + 1);
-        UArrowComponent* Arrow = CreateDefaultSubobject<UArrowComponent>(*ArrowName);
-        Arrow->SetupAttachment(SlotsRoot);
-        
-        Arrow->SetRelativeLocation(FVector(0, i * 150.0f - 300.0f, 50.0f)); 
-        
-        Arrow->ArrowSize = 1.0f;
-        Arrow->bTreatAsASprite = true;
+	SlotsRoot = CreateDefaultSubobject<USceneComponent>(TEXT("SlotsRoot"));
+	SlotsRoot->SetupAttachment(BoardMesh);
+	
+	DefaultMarbleColors.Add(FLinearColor(1.0f, 1.0f, 0.0f));
+	DefaultMarbleColors.Add(FLinearColor(0.0f, 1.0f, 1.0f));
+	DefaultMarbleColors.Add(FLinearColor(0.0f, 1.0f, 0.0f));
+	DefaultMarbleColors.Add(FLinearColor(1.0f, 0.0f, 0.0f));
+	DefaultMarbleColors.Add(FLinearColor(0.5f, 0.0f, 1.0f));
 
-        SlotArrows.Add(Arrow);
-    }
+	CreateSlotArrows();
+}
+
+void AMarbleWorkbench::CreateSlotArrows()
+{
+	for (int32 i = 0; i < 5; i++)
+	{
+		const FString ArrowName = FString::Printf(TEXT("SlotArrow_%d"), i + 1);
+		TObjectPtr<UArrowComponent> Arrow = CreateDefaultSubobject<UArrowComponent>(*ArrowName);
+		
+		if (Arrow)
+		{
+			Arrow->SetupAttachment(SlotsRoot);
+			Arrow->SetRelativeLocation(FVector(0.f, (i * 150.0f) + -300.0f, 50.0f));
+			Arrow->ArrowSize = 1.0f;
+			Arrow->bTreatAsASprite = true;
+
+			SlotArrows.Add(Arrow);
+		}
+	}
 }
 
 void AMarbleWorkbench::BeginPlay()
 {
-    Super::BeginPlay();
-    InitializeColors();
-    
-    if (!MarbleClass) 
-    {
-        UE_LOG(LogTemp, Error, TEXT("Workbench: Keine MarbleClass gesetzt!"));
-        return;
-    }
-    
-    for (int32 i = 0; i < 5; i++)
-    {
-        if (SlotArrows.IsValidIndex(i) && SlotArrows[i])
-        {
-            FTransform SpawnTransform = SlotArrows[i]->GetComponentTransform();
-            
-            AMarble* NewMarble = GetWorld()->SpawnActor<AMarble>(MarbleClass, SpawnTransform);
-            
-            if (NewMarble)
-            {
-                NewMarble->SetFrozen(true);       
-                NewMarble->StartingLaneIndex = i;
-                NewMarble->MarbleName = FString::Printf(TEXT("M_P%d"), i + 1);
-                
-                NewMarble->AttachToComponent(SlotArrows[i], FAttachmentTransformRules::KeepWorldTransform);
-                
-                if(NewMarble->MarbleMesh)
-                {
-                    NewMarble->MarbleMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-                    NewMarble->MarbleMesh->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
-                }
-
-                NewMarble->Tags.Add(FName("ConfigMarble"));
-
-                if (MarbleColors.IsValidIndex(i))
-                {
-                    NewMarble->SetMarbleColor(MarbleColors[i]); 
-                }
-
-                ConfigMarbles.Add(NewMarble);
-            }
-        }
-    }
+	Super::BeginPlay();
+	
+	SpawnConfigMarbles();
 }
 
-void AMarbleWorkbench::InitializeColors()
+void AMarbleWorkbench::SpawnConfigMarbles()
 {
-    MarbleColors.Empty();
-    MarbleColors.Add(FLinearColor(1.0f, 1.0f, 0.0f));
-    MarbleColors.Add(FLinearColor(0.0f, 1.0f, 1.0f));
-    MarbleColors.Add(FLinearColor(0.0f, 1.0f, 0.0f));
-    MarbleColors.Add(FLinearColor(1.0f, 0.0f, 0.0f));
-    MarbleColors.Add(FLinearColor(0.5f, 0.0f, 1.0f));
+	if (!MarbleClass) 
+	{
+		return;
+	}
+	
+	ConfigMarbles.Empty();
+
+	for (int32 i = 0; i < SlotArrows.Num(); i++)
+	{
+		if (!SlotArrows[i])
+		{
+			continue;
+		}
+
+		const FTransform SpawnTransform = SlotArrows[i]->GetComponentTransform();
+		AMarble* NewMarble = GetWorld()->SpawnActor<AMarble>(MarbleClass, SpawnTransform);
+		
+		if (NewMarble)
+		{
+			NewMarble->SetFrozen(true);       
+			NewMarble->StartingLaneIndex = i;
+			NewMarble->MarbleName = FString::Printf(TEXT("M_P%d"), i + 1);
+
+			NewMarble->AttachToComponent(SlotArrows[i], FAttachmentTransformRules::KeepWorldTransform);
+			
+			if (UStaticMeshComponent* Mesh = NewMarble->GetMesh())
+			{
+				Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+				Mesh->SetCollisionResponseToChannel(ECC_Visibility, ECR_Block);
+			}
+
+			NewMarble->Tags.Add(FName("ConfigMarble"));
+
+			if (DefaultMarbleColors.IsValidIndex(i))
+			{
+				NewMarble->SetMarbleColor(DefaultMarbleColors[i]); 
+			}
+
+			ConfigMarbles.Add(NewMarble);
+		}
+	}
 }
 
 void AMarbleWorkbench::SwapLaneAssignments(AMarble* TargetMarble, int32 DesiredLaneIndex)
 {
-    if (!TargetMarble || DesiredLaneIndex < 0 || DesiredLaneIndex > 4) return;
-    
-    int32 OldLaneIndex = TargetMarble->StartingLaneIndex;
-    FString OldMarbleName = TargetMarble->MarbleName;
-    
-    if (OldLaneIndex == DesiredLaneIndex) return;
-    AMarble* ConflictingMarble = nullptr;
+	const int32 OldLaneIndex = TargetMarble->StartingLaneIndex;
+	const FString OldMarbleName = TargetMarble->MarbleName;
+	if (!TargetMarble || DesiredLaneIndex < 0 || DesiredLaneIndex > 4 || OldLaneIndex == DesiredLaneIndex) 
+	{
+		return;
+	}
 
-    for (AMarble* M : ConfigMarbles)
-    {
-        if (M && M != TargetMarble && M->StartingLaneIndex == DesiredLaneIndex)
-        {
-            ConflictingMarble = M;
-            break;
-        }
-    }
-    
-    TargetMarble->StartingLaneIndex = DesiredLaneIndex;
-    TargetMarble->MarbleName = FString::Printf(TEXT("M_P%d"), DesiredLaneIndex + 1);
-    
-    if (ConflictingMarble)
-    {
-        ConflictingMarble->StartingLaneIndex = OldLaneIndex;
-        ConflictingMarble->MarbleName = OldMarbleName;
-        UE_LOG(LogTemp, Log, TEXT("Bahn getauscht: %s ist jetzt Bahn %d, %s ist jetzt Bahn %d"), 
-            *TargetMarble->MarbleName, DesiredLaneIndex + 1, 
-            *ConflictingMarble->MarbleName, OldLaneIndex + 1);
-    }
+	AMarble* ConflictingMarble = nullptr;
+
+	for (AMarble* Marble : ConfigMarbles)
+	{
+		if (Marble && Marble != TargetMarble && Marble->StartingLaneIndex == DesiredLaneIndex)
+		{
+			ConflictingMarble = Marble;
+			break;
+		}
+	}
+	
+	TargetMarble->StartingLaneIndex = DesiredLaneIndex;
+	TargetMarble->MarbleName = FString::Printf(TEXT("M_P%d"), DesiredLaneIndex + 1);
+	
+	if (ConflictingMarble)
+	{
+		ConflictingMarble->StartingLaneIndex = OldLaneIndex;
+		ConflictingMarble->MarbleName = OldMarbleName;
+	}
 }
 
 TArray<FMarbleData> AMarbleWorkbench::GetAllMarbleData() const
 {
-    TArray<FMarbleData> AllData;
-    for (AMarble* Marble : ConfigMarbles)
-    {
-        if (Marble)
-        {
-            AllData.Add(Marble->GetMarbleData());
-        }
-    }
-    return AllData;
+	TArray<FMarbleData> AllData;
+	AllData.Reserve(ConfigMarbles.Num());
+
+	for (const AMarble* Marble : ConfigMarbles)
+	{
+		if (Marble)
+		{
+			AllData.Add(Marble->GetMarbleData());
+		}
+	}
+	return AllData;
 }
