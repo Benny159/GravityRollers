@@ -23,6 +23,7 @@ class GRAVITYROLLERS_API AMarbleWorkbench : public AActor
 	GENERATED_BODY()
 	
 public:    
+	/** Sets default values and colors for the marbles. */
 	AMarbleWorkbench();
 
 	/**
@@ -42,6 +43,10 @@ public:
 	void SwapLaneAssignments(AMarble* TargetMarble, int32 DesiredLaneIndex);
 
 protected:
+	/**
+	 * Called when the game starts. 
+     * Spawns the configuration marbles at their designated slots.
+     */
 	virtual void BeginPlay() override;
 
 	/** Spawns the marbles at the arrow locations defined in the constructor. */

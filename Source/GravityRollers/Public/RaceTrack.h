@@ -17,79 +17,109 @@ struct FMarbleData;
 
 /**
  * ARaceTrack manages the physical track, spawning logic, and win/loss conditions.
+ * It coordinates the start sequence, hazards (Fan, Dog), and the finish line logic.
  */
 UCLASS()
 class GRAVITYROLLERS_API ARaceTrack : public AActor
 {
-	GENERATED_BODY()
-	
+    GENERATED_BODY()
+    
 public:    
-	ARaceTrack();
+    /** Sets default values for this actor's properties and creates the trigger components. */
+    ARaceTrack();
 
-	UFUNCTION(BlueprintCallable, Category = "Race Logic")
-	void StartRace();
-	
-	UFUNCTION(BlueprintCallable, Category = "Race Logic")
-	void SpawnMarble(TSubclassOf<AMarble> MarbleClass, int32 LaneIndex, const FMarbleData& InMarbleData);
-	
-	UFUNCTION(BlueprintCallable, Category = "Race Logic")
-	void ResetTrack();
+    /**
+	 * Begins the race sequence.
+     * Unfreezes all active marbles, switches player camera to race mode, 
+     * and activates environmental hazards (Fan, Dog).
+     */
+    UFUNCTION(BlueprintCallable, Category = "Race Logic")
+    void StartRace();
+    
+    /**
+     * Spawns a single marble instance at a specific lane in a FROZEN state.
+     * The marble will not simulate physics until StartRace() is called.
+     * @param MarbleClass The class of the marble actor to spawn.
+     * @param LaneIndex The index of the start position (0-4).
+     * @param InMarbleData The configuration struct applied to the marble after spawn.
+     */
+    UFUNCTION(BlueprintCallable, Category = "Race Logic")
+    void SpawnMarble(TSubclassOf<AMarble> MarbleClass, int32 LaneIndex, const FMarbleData& InMarbleData);
+    
+    /**
+     * Resets the track and race state.
+     * Destroys active marbles, handles the camera transition back to the config menu,
+     * and respawns the initial marble set from the Workbench.
+     */
+    UFUNCTION(BlueprintCallable, Category = "Race Logic")
+    void ResetTrack();
 
-	UFUNCTION(BlueprintCallable, Category = "Race Control")
-	void SetupRaceFromData(const TArray<FMarbleData>& MarblesData);
+    /**
+     * Clears existing marbles and spawns a fresh set based on the provided data array.
+     * @param MarblesData An array of FMarbleData structs defining the new participants.
+     */
+    UFUNCTION(BlueprintCallable, Category = "Race Control")
+    void SetupRaceFromData(const TArray<FMarbleData>& MarblesData);
 
 protected:
-	virtual void BeginPlay() override;
+    /**
+	 * Called when the game starts. 
+     * Caches references and sets a timer to trigger InitialSpawnFromWorkbench. 
+     */
+    virtual void BeginPlay() override;
 
-	/** Creates the arrow components for start positions. Called in Constructor. */
-	void CreateStartPositions();
+    /**
+	 * Creates the arrow components used as spawn points. 
+     * Generates 5 positions with fixed offsets. Called in Constructor. 
+     */
+    void CreateStartPositions();
 
-	/** Caches references to GameMode and PlayerController to avoid repeated casting. */
-	void CacheGameReferences();
+    /**
+	 * Caches references to GameMode and PlayerController.
+     * Logs an error if essential game framework classes are missing.
+     */
+    void CacheGameReferences();
 
-	UFUNCTION()
-	void InitialSpawnFromWorkbench();
+    /** 
+	 * Retrieves marble data from the AMarbleWorkbench actor.
+     * Called automatically via timer in BeginPlay to ensure Workbench is initialized.
+     */
+    UFUNCTION()
+    void InitialSpawnFromWorkbench();
 
-	UFUNCTION()
-	void OnEliminationZoneOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+    /**
+     * Handles the overlap event when a marble falls into the elimination zone.
+     * Eliminates the marble, sets rank to 99, and auto-switches the camera if needed.
+     * @param OverlappedComp The component that triggered the overlap.
+     * @param OtherActor The actor that hit the trigger.
+     * @param OtherComp The specific component of the other actor.
+     * @param OtherBodyIndex The body index of the other component.
+     * @param bFromSweep Whether the overlap was caused by a sweep.
+     * @param SweepResult The hit result of the sweep.
+     */
+    UFUNCTION()
+    void OnEliminationZoneOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 private:
-	UFUNCTION()
-	void OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+    /**
+     * Handles the overlap event when a marble crosses the finish line trigger.
+     * Records finish time/speed, updates GameMode stats, and auto-switches the camera.
+     * @param OverlappedComp The component that triggered the overlap.
+     * @param OtherActor The actor that hit the trigger.
+     * @param OtherComp The specific component of the other actor.
+     * @param OtherBodyIndex The body index of the other component.
+     * @param bFromSweep Whether the overlap was caused by a sweep.
+     * @param SweepResult The hit result of the sweep.
+     */
+    UFUNCTION()
+    void OnEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 public:
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UStaticMeshComponent> TrackMesh;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UStaticMeshComponent> StartButton;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UBoxComponent> EndTrigger;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    TObjectPtr<UStaticMeshComponent> TrackMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
-	TObjectPtr<UBoxComponent> EliminationZone;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Start System")
-	TObjectPtr<USceneComponent> StartPointsRoot;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Start System")
-	TArray<TObjectPtr<UArrowComponent>> StartPositions;
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    TObjectPtr<UStaticMeshComponent> StartButton;
 
-	UPROPERTY(EditAnywhere, Category = "Start System")
-	TSubclassOf<AMarble> RaceMarbleClass;
-
-private:
-	UPROPERTY(Transient)
-	TArray<TObjectPtr<AMarble>> ActiveMarbles;
-
-	/** Cached reference to the custom Game Mode. */
-	UPROPERTY(Transient)
-	TObjectPtr<AMarbleGameMode> MarbleGameMode;
-
-	/** Cached reference to the custom Player Controller. */
-	UPROPERTY(Transient)
-	TObjectPtr<AMarblePlayerController> MarblePlayerController;
-
-	bool bRaceStarted;
-};
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    TObjectPtr<UBoxComponent> EndTrigger;
