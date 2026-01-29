@@ -29,7 +29,7 @@ public:
     ARaceTrack();
 
     /**
-	 * Begins the race sequence.
+     * Begins the race sequence.
      * Unfreezes all active marbles, switches player camera to race mode, 
      * and activates environmental hazards (Fan, Dog).
      */
@@ -63,25 +63,25 @@ public:
 
 protected:
     /**
-	 * Called when the game starts. 
+     * Called when the game starts. 
      * Caches references and sets a timer to trigger InitialSpawnFromWorkbench. 
      */
     virtual void BeginPlay() override;
 
     /**
-	 * Creates the arrow components used as spawn points. 
+     * Creates the arrow components used as spawn points. 
      * Generates 5 positions with fixed offsets. Called in Constructor. 
      */
     void CreateStartPositions();
 
     /**
-	 * Caches references to GameMode and PlayerController.
+     * Caches references to GameMode and PlayerController.
      * Logs an error if essential game framework classes are missing.
      */
     void CacheGameReferences();
 
     /** 
-	 * Retrieves marble data from the AMarbleWorkbench actor.
+     * Retrieves marble data from the AMarbleWorkbench actor.
      * Called automatically via timer in BeginPlay to ensure Workbench is initialized.
      */
     UFUNCTION()
@@ -123,3 +123,28 @@ public:
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
     TObjectPtr<UBoxComponent> EndTrigger;
+
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+    TObjectPtr<UBoxComponent> EliminationZone;
+	
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Start System")
+    TObjectPtr<USceneComponent> StartPointsRoot;
+	
+    UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Start System")
+    TArray<TObjectPtr<UArrowComponent>> StartPositions;
+
+    UPROPERTY(EditAnywhere, Category = "Start System")
+    TSubclassOf<AMarble> RaceMarbleClass;
+
+private:
+    UPROPERTY(Transient)
+    TArray<TObjectPtr<AMarble>> ActiveMarbles;
+    
+    UPROPERTY(Transient)
+    TObjectPtr<AMarbleGameMode> MarbleGameMode;
+
+    UPROPERTY(Transient)
+    TObjectPtr<AMarblePlayerController> MarblePlayerController;
+
+    bool bRaceStarted;
+};

@@ -126,7 +126,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GravityRollers|Race State")
 	int32 TotalMarbles;
 
-private:
 	int32 FinishedCount;
+
 	int32 EliminatedCount;
 };

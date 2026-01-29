@@ -117,7 +117,7 @@ private:
 	 * @return The found actor or nullptr.
 	 */
 	UFUNCTION()
-	AActor* FindCameraByTag(FName Tag) const;
+	AActor* FindCameraByTag(FName Tag);
 
 	/** Input callback for View 1 */
 	void ViewMarble1();
@@ -157,8 +157,8 @@ private:
 	int32 CurrentViewIndex;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GravityRollers|Camera", meta = (AllowPrivateAccess = "true"))
-	int32 SwitchTime;
+	float SwitchTime;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "GravityRollers|Camera", meta = (AllowPrivateAccess = "true"))
-	int32 VirtualBlendTime;
+	float VirtualBlendTime;
 };

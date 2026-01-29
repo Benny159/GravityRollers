@@ -203,6 +203,11 @@ void AMarblePlayerController::CleanupGhostCamera()
     }
 }
 
+bool AMarblePlayerController::IsRaceActive() const
+{
+    return bRaceIsActive;
+}
+
 void AMarblePlayerController::FocusOnMarble(int32 MarbleIndex)
 {
     if (!bRaceIsActive || bIsCameraSwitching)
