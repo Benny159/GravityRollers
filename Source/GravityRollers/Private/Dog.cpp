@@ -1,7 +1,11 @@
+// Copyright (c) 2026 Gravity Rollers. All Rights Reserved.
+
 #include "Dog.h"
+#include "Marble.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/AudioComponent.h"
 #include "Camera/CameraShakeBase.h"
+#include "TimerManager.h"
 
 ADog::ADog()
 {
@@ -10,9 +14,11 @@ ADog::ADog()
     DogMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("DogMesh"));
     RootComponent = DogMesh;
 
-    BarkAudio = CreateDefaultSubobject<UAudioComponent>(TEXT("BarkAudio"));
-    BarkAudio->SetupAttachment(DogMesh);
-    BarkAudio->bAutoActivate = false;
+    // Default values
+    bIsDogEnabled = true;
+    MeanTimeBetweenShocks = 20.0f;
+    ShockStrength = 500.0f;
+    CurrentState = EDogState::Sleeping;
 }
 
 void ADog::BeginPlay()
@@ -36,12 +42,10 @@ void ADog::SetDogEnabled(bool bEnabled)
     if (bIsDogEnabled)
     {
         CurrentState = EDogState::Idle;
-        UE_LOG(LogTemp, Log, TEXT("Hund: Aktiviert (Steht auf)."));
     }
     else
     {
         CurrentState = EDogState::Sleeping;
-        UE_LOG(LogTemp, Log, TEXT("Hund: Deaktiviert (Legt sich hin)."));
         
         StopShockLoop();
     }
@@ -52,7 +56,6 @@ void ADog::StartShockLoop()
 {
     if (bIsDogEnabled)
     {
-        UE_LOG(LogTemp, Warning, TEXT("Hund: Rennen startet -> Erdbeben-Timer aktiv!"));
         ScheduleNextShock();
     }
 }
@@ -61,6 +64,7 @@ void ADog::StopShockLoop()
 {
     GetWorld()->GetTimerManager().ClearTimer(TimerHandle_NextShock);
     GetWorld()->GetTimerManager().ClearTimer(TimerHandle_ResetAnim);
+    GetWorld()->GetTimerManager().ClearTimer(TimerHandle_ShockDelay);
     
     if (bIsDogEnabled)
     {
@@ -70,9 +74,12 @@ void ADog::StopShockLoop()
 
 void ADog::ScheduleNextShock()
 {
-    if (!bIsDogEnabled) return;
+    if (!bIsDogEnabled)
+    {
+        return;
+    }
 
-    float Delay = GetExponentialRandom(MeanTimeBetweenShocks);
+    const float Delay = GetExponentialRandom(MeanTimeBetweenShocks);
     
     GetWorld()->GetTimerManager().SetTimer(
         TimerHandle_NextShock, 
@@ -85,12 +92,14 @@ void ADog::ScheduleNextShock()
 
 void ADog::PerformShock()
 {
-    if (!bIsDogEnabled) return;
+    if (!bIsDogEnabled)
+    {
+        return;
+    }
     
     CurrentState = EDogState::Jumping;
-    
-    if (BarkAudio) BarkAudio->Play();
-    
+
+    // Delay the actual physical impact slightly to match animation
     GetWorld()->GetTimerManager().SetTimer(
         TimerHandle_ShockDelay, 
         this, 
@@ -99,6 +108,7 @@ void ADog::PerformShock()
         false
     );
 
+    // Schedule reset to idle
     GetWorld()->GetTimerManager().SetTimer(
         TimerHandle_ResetAnim, 
         this, 
@@ -112,15 +122,13 @@ void ADog::ApplyShockEffects()
 {
     if (SeismicShakeClass)
     {
-        APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0);
-        if (PC)
+        if (APlayerController* PC = UGameplayStatics::GetPlayerController(this, 0))
         {
-            PC->ClientStartCameraShake(SeismicShakeClass, 1.0f); 
+            PC->ClientStartCameraShake(SeismicShakeClass, 1.0f);
         }
     }
     
     UpdateMarbleCache();
-    int32 HitCount = 0;
     
     for (AMarble* Marble : CachedMarbles)
     {
@@ -131,30 +139,33 @@ void ADog::ApplyShockEffects()
             ShakeDir.Normalize();
             
             Marble->GetMesh()->AddImpulse(ShakeDir * ShockStrength, NAME_None, true);
-            HitCount++;
         }
     }
-
-    UE_LOG(LogTemp, Log, TEXT("Hund: WUMMS! (Erdbeben verzögert ausgelöst bei %d Murmeln)"), HitCount);
 }
 
 void ADog::ResetToIdle()
 {
-
     if (bIsDogEnabled)
     {
         CurrentState = EDogState::Idle;
-
         ScheduleNextShock();
     }
 }
 
 float ADog::GetExponentialRandom(float Mean)
 {
-    if (Mean <= 0.0f) return 5.0f;
+    if (Mean <= 0.0f)
+    {
+        return 5.0f;
+    }
     float U = FMath::FRand(); 
-    if (U <= 0.0001f) U = 0.0001f;
-    float ExpTime = -FMath::Loge(U) * Mean;
+    // Clamp to avoid Log(0)
+    if (U <= 0.0001f)
+    {
+        U = 0.0001f;
+    }
+    const float ExpTime = -FMath::Loge(U) * Mean;
+    // Minimum 2 seconds delay
     return 2.0f + ExpTime;
 }
 
@@ -165,10 +176,12 @@ void ADog::UpdateMarbleCache()
     UGameplayStatics::GetAllActorsOfClass(GetWorld(), AMarble::StaticClass(), FoundActors);
     for (AActor* Actor : FoundActors)
     {
-        AMarble* Marble = Cast<AMarble>(Actor);
-        if (Marble && Marble->ActorHasTag("RaceMarble") && !Marble->bHasFinished && !Marble->bIsEliminated)
+        if (AMarble* Marble = Cast<AMarble>(Actor))
         {
-            CachedMarbles.Add(Marble);
+            if (IsValid(Marble) && !Marble->bHasFinished && !Marble->bIsEliminated)
+            {
+                CachedMarbles.Add(Marble);
+            }
         }
     }
 }

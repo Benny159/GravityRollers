@@ -1,18 +1,42 @@
+// Copyright (c) 2026 Gravity Rollers. All Rights Reserved.
+
 #include "MarbleGameMode.h"
 #include "DataTrackerPlugin/DataTracker.h"
 #include "Dog.h"
+#include "Marble.h"
 #include "Kismet/GameplayStatics.h"
 #include "MarblePlayerController.h"
 
 AMarbleGameMode::AMarbleGameMode()
 {
-    bRaceActive = false;
-    RaceStartTime = 0.0f;
-    RaceEndTime = 0.0f;
-    
-    TotalMarbles = 5;
-    FinishedCount = 0;
-    EliminatedCount = 0;
+    bAllowWind = true;
+	bAllowSeismic = true;
+	bRaceActive = false;
+	RaceStartTime = 0.0f;
+	RaceEndTime = 0.0f;
+	CurrentRaceTime = 0.0f;
+	TotalMarbles = 5;
+	FinishedCount = 0;
+	EliminatedCount = 0;
+}
+
+void AMarbleGameMode::Tick(float DeltaSeconds)
+{
+    Super::Tick(DeltaSeconds);
+
+    if (bRaceActive)
+    {
+        CurrentRaceTime += DeltaSeconds;
+    }
+}
+
+void AMarbleGameMode::StartRace(int32 NumberOfMarbles)
+{
+    ResetRaceState();
+
+    TotalMarbles = NumberOfMarbles;
+    bRaceActive = true;
+    RaceStartTime = GetWorld()->GetTimeSeconds();
 }
 
 void AMarbleGameMode::RegisterMarble(AMarble* NewMarble)
@@ -20,7 +44,6 @@ void AMarbleGameMode::RegisterMarble(AMarble* NewMarble)
     if (NewMarble && !RacingMarbles.Contains(NewMarble))
     {
         RacingMarbles.Add(NewMarble);
-        UE_LOG(LogTemp, Log, TEXT("Murmel registriert: %s. Total: %d"), *NewMarble->GetName(), TotalMarbles);
     }
 }
 
@@ -38,17 +61,6 @@ TArray<AMarble*> AMarbleGameMode::GetMarblesSortedByRank()
     });
 
     return SortedList;
-}
-
-void AMarbleGameMode::StartRace(int32 NumberOfMarbles)
-{
-    ResetRaceState();
-
-    TotalMarbles = NumberOfMarbles;
-    bRaceActive = true;
-    RaceStartTime = GetWorld()->GetTimeSeconds();
-
-    UE_LOG(LogTemp, Warning, TEXT("RENNEN GESTARTET! Erwarte %d Murmeln im Ziel."), TotalMarbles);
 }
 
 void AMarbleGameMode::ResetRaceState()
@@ -76,20 +88,24 @@ float AMarbleGameMode::GetCurrentRaceTime() const
 
 void AMarbleGameMode::RegisterMarbleFinished()
 {
-    if (!bRaceActive) return;
+    if (!bRaceActive)
+	{
+		return;
+	}
 
     FinishedCount++;
-    UE_LOG(LogTemp, Log, TEXT("Murmel im Ziel. Fortschritt: %d/%d"), (FinishedCount + EliminatedCount), TotalMarbles);
     
     CheckRaceStatus();
 }
 
 void AMarbleGameMode::RegisterMarbleEliminated()
 {
-    if (!bRaceActive) return;
+    if (!bRaceActive)
+	{
+		return;
+	}
 
     EliminatedCount++;
-    UE_LOG(LogTemp, Warning, TEXT("Murmel eliminiert. Fortschritt: %d/%d"), (FinishedCount + EliminatedCount), TotalMarbles);
     
     CheckRaceStatus();
 }
@@ -101,19 +117,19 @@ void AMarbleGameMode::CheckRaceStatus()
         bRaceActive = false;
         RaceEndTime = GetWorld()->GetTimeSeconds();
 
-        UE_LOG(LogTemp, Warning, TEXT("RENNEN BEENDET! Alle Murmeln sind durch."));
         GetMarblesSortedByRank();
         RaceEnded();
-        ADog* Dog = Cast<ADog>(UGameplayStatics::GetActorOfClass(this, ADog::StaticClass()));
-        Dog->StopShockLoop();
+        if (ADog* Dog = Cast<ADog>(UGameplayStatics::GetActorOfClass(this, ADog::StaticClass())))
+		{
+			Dog->StopShockLoop();
+		}
 
-        AMarblePlayerController* PC = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());
-        if (PC)
-        {
-            PC->SetRaceState(false);
-            PC->SwitchToAnalysView();
-            PC->SelectMarble(NULL);
-        }
+        if (AMarblePlayerController* PC = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController()))
+		{
+			PC->SetRaceState(false);
+			PC->SwitchToAnalysView();
+			PC->SelectMarble(nullptr);
+		}
         
         if (OnRaceEnded.IsBound())
         {
@@ -124,37 +140,28 @@ void AMarbleGameMode::CheckRaceStatus()
 
 void AMarbleGameMode::ForceEndRace()
 {
-    if (!bRaceActive) return;
+    if (!bRaceActive)
+	{
+		return;
+	}
 
-    UE_LOG(LogTemp, Warning, TEXT("FORCE END RACE: Time-Out! Bereinige verbleibende Murmeln..."));
-    
     TArray<AActor*> FoundMarbles;
     UGameplayStatics::GetAllActorsWithTag(GetWorld(), FName("RaceMarble"), FoundMarbles);
 
     for (AActor* Actor : FoundMarbles)
     {
-        AMarble* Marble = Cast<AMarble>(Actor);
-        if (Marble && IsValid(Marble))
+        if (AMarble* Marble = Cast<AMarble>(Actor))
         {
-            if (!Marble->bHasFinished && !Marble->bIsEliminated)
+            if (IsValid(Marble) && !Marble->bHasFinished && !Marble->bIsEliminated)
             {
                 Marble->Eliminate();
                 
+                // Assign a low rank to indicate DNF (Did Not Finish) or Forced End
                 Marble->FinalRank = 99;
                 
                 RegisterMarble(Marble);
                 RegisterMarbleEliminated();
             }
         }
-    }
-}
-
-void AMarbleGameMode::Tick(float DeltaSeconds)
-{
-    Super::Tick(DeltaSeconds);
-
-    if (bRaceActive)
-    {
-        CurrentRaceTime += DeltaSeconds;
     }
 }

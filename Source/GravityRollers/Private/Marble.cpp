@@ -1,19 +1,21 @@
+// Copyright (c) 2026 Gravity Rollers. All Rights Reserved.
+
 #include "Marble.h"
 #include "MarbleGameMode.h"
+#include "MarblePlayerController.h"
 #include "DataTrackerPlugin/DataSet/DataSet.h"
 #include "DataTrackerPlugin/DataTracker.h"
-#include "MarblePlayerController.h"
 #include "Camera/CameraComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Components/StaticMeshComponent.h"
 #include "GameFramework/SpringArmComponent.h"
-#include "Particles/ParticleSystemComponent.h"
+#include "PhysicalMaterials/PhysicalMaterial.h"
 
 AMarble::AMarble()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	bIsSelected = false;
-	
+
+	// Component Setup
 	MarbleMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MarbleMesh"));
 	RootComponent = MarbleMesh;
 	MarbleMesh->SetSimulatePhysics(true);
@@ -30,11 +32,27 @@ AMarble::AMarble()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
+	// Default values
+	bIsSelected = false;
 	bHasFinished = false;
 	bIsEliminated = false;
 	StartingLaneIndex = -1;
 	FinalRaceTime = 0.0f;
 	FinalRaceSpeed = 0.0f;
+	ScaleFactor = 100.0f;
+	Size = 1.0f;
+	Weight = 100.0f;
+	SurfaceRoughness = 0.5f;
+	MaterialDensity = 1.0f;
+	MassDistribution = FVector::ZeroVector;
+	Mass = 1.0f;
+	Friction = 0.5f;
+	Restitution = 0.5f;
+	AngularDamping = 0.5f;
+	FrictionCombineMode = EFrictionCombineMode::Min;
+	RestitutionCombineMode = EFrictionCombineMode::Max;
+	MarbleName = TEXT("Marble");
+	MarbleColor = FLinearColor::White;
 	
 }
 
@@ -43,8 +61,6 @@ void AMarble::BeginPlay()
 	Super::BeginPlay();
 	InitialLocation = GetActorLocation();
 	UpdatePhysicsProperties();
-
-	AMarbleGameMode* GM = Cast<AMarbleGameMode>(GetWorld()->GetAuthGameMode());
 }
 
 void AMarble::Tick(float DeltaTime)
@@ -59,22 +75,29 @@ void AMarble::Tick(float DeltaTime)
 	{
 		UpdateSelectionVisuals(DeltaTime);
 	}
-	AMarbleGameMode* GM = Cast<AMarbleGameMode>(GetWorld()->GetAuthGameMode());
 	
-	if (GM && GM->bRaceActive && !bHasFinished && !bIsEliminated && !ActorHasTag(FName("ConfigMarble")))
-	{
-		float RaceStartTime = GM->RaceStartTime;
-		float CurrentSpeed = GetVelocity().Size() / ScaleFactor;
-		float ActualRaceTime = GetWorld()->GetTimeSeconds();
-		float Time = ActualRaceTime - RaceStartTime;
-		
-		FString StatName = "Speed@" + MarbleName;
+	UpdateRaceStats();
+}
 
-		UDataSet* Set = ADataTracker::GetDataSet(StatName);
-		
-		if (Set)
+void AMarble::UpdateRaceStats()
+{
+	if (bHasFinished || bIsEliminated || ActorHasTag(FName("ConfigMarble")))
+	{
+		return;
+	}
+
+	AMarbleGameMode* MarbleGameMode = Cast<AMarbleGameMode>(GetWorld()->GetAuthGameMode());
+	
+	if (MarbleGameMode && MarbleGameMode->bRaceActive)
+	{
+		const float CurrentSpeed = GetVelocity().Size() / ScaleFactor;
+		const float Time = GetWorld()->GetTimeSeconds() - MarbleGameMode->RaceStartTime;
+		const FString StatName = TEXT("Speed@") + MarbleName;
+
+		UDataSet* StatSet = ADataTracker::GetDataSet(StatName);
+		if (StatSet)
 		{
-			Set->Update(Time, CurrentSpeed, true, true, true, false, false, false);
+			StatSet->Update(Time, CurrentSpeed, true, true, true, false, false, false);
 		}
 	}
 }
@@ -83,34 +106,31 @@ void AMarble::NotifyActorOnClicked(FKey ButtonPressed)
 {
 	Super::NotifyActorOnClicked(ButtonPressed);
 	
-	if (MarbleMesh->IsSimulatingPhysics()) return;
-
-	if (!ActorHasTag(FName("ConfigMarble"))) 
+	if ((MarbleMesh && MarbleMesh->IsSimulatingPhysics()) || !ActorHasTag(FName("ConfigMarble")))
 	{
-		return; 
+		return;
 	}
 	
-	AMarblePlayerController* PC = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());
-	if (PC)
+	AMarblePlayerController* MarblePlayerController = Cast<AMarblePlayerController>(GetWorld()->GetFirstPlayerController());
+	if (MarblePlayerController)
 	{
-		PC->SelectMarble(this);
+		MarblePlayerController->SelectMarble(this);
 	}
 }
 
 void AMarble::SetSelected(bool bSelected)
 {
 	bIsSelected = bSelected;
+	if (bIsSelected)
+	{
+		InitialLocation = GetActorLocation();
+	}
 }
 
 void AMarble::UpdateSelectionVisuals(float DeltaTime)
 {
-	FVector TargetLoc = InitialLocation;
-	if (bIsSelected)
-	{
-		TargetLoc = InitialLocation + FVector(0, 0, 150.0f);
-	}
-	
-	FVector NewLoc = FMath::VInterpTo(GetActorLocation(), TargetLoc, DeltaTime, 10.0f);
+	const FVector TargetLoc = bIsSelected ? InitialLocation + FVector(0, 0, 150.0f) : InitialLocation;
+	const FVector NewLoc = FMath::VInterpTo(GetActorLocation(), TargetLoc, DeltaTime, 10.0f);
 	SetActorLocation(NewLoc);
 }
 
@@ -145,6 +165,10 @@ void AMarble::SetFrozen(bool bFrozen)
 
 void AMarble::UpdatePhysicsProperties()
 {
+	if (!MarbleMesh)
+	{
+		return;
+	}
 	MarbleMesh->SetWorldScale3D(FVector(Size));
 
 	Mass = Weight * MaterialDensity;
@@ -152,23 +176,21 @@ void AMarble::UpdatePhysicsProperties()
 
 	MarbleMesh->BodyInstance.LinearDamping = SurfaceRoughness;
 	MarbleMesh->BodyInstance.COMNudge = MassDistribution;
-
-	MarbleMesh->SetPhysMaterialOverride(CreatePhysicsMaterial());
-
 	MarbleMesh->BodyInstance.AngularDamping = AngularDamping;
 
+	MarbleMesh->SetPhysMaterialOverride(CreatePhysicsMaterial());
 }
 
 UPhysicalMaterial* AMarble::CreatePhysicsMaterial()
 {
 	UPhysicalMaterial* PhysMat = NewObject<UPhysicalMaterial>(this);
-
-	PhysMat->Restitution = Restitution;
-	PhysMat->Friction = Friction;
-
-	PhysMat->FrictionCombineMode = FrictionCombineMode;
-	PhysMat->RestitutionCombineMode = RestitutionCombineMode;
-
+	if (PhysMat)
+	{
+		PhysMat->Restitution = Restitution;
+		PhysMat->Friction = Friction;
+		PhysMat->FrictionCombineMode = FrictionCombineMode;
+		PhysMat->RestitutionCombineMode = RestitutionCombineMode;
+	}
 	return PhysMat;
 }
 
@@ -179,7 +201,6 @@ void AMarble::SetMarbleColor(FLinearColor NewColor)
 	if (MarbleMesh)
 	{
 		UMaterialInstanceDynamic* DynMat = MarbleMesh->CreateAndSetMaterialInstanceDynamic(0);
-        
 		if (DynMat)
 		{
 			DynMat->SetVectorParameterValue(FName("BaseColor"), NewColor);
@@ -207,39 +228,39 @@ void AMarble::InitializeFromData(const FMarbleData& Data)
 
 void AMarble::FinishRace(float TimeStamp, float FinishSpeed)
 {
-	if (bHasFinished || bIsEliminated) return;
+	if (bHasFinished || bIsEliminated)
+	{
+		return;
+	}
 
 	bHasFinished = true;
 	FinalRaceTime = TimeStamp;
 	FinalRaceSpeed = FinishSpeed / ScaleFactor;
-	
-	MarbleMesh->SetLinearDamping(2.0f);
-	MarbleMesh->SetAngularDamping(2.0f);
 
-	UE_LOG(LogTemp, Warning, TEXT("ZIEL! Murmel %s | Zeit: %.2fs | Speed: %.2f cm/s"), 
-		*MarbleName, FinalRaceTime, FinalRaceSpeed);
+	//Slow down Marble
+	if (MarbleMesh)
+	{
+		MarbleMesh->SetLinearDamping(2.0f);
+		MarbleMesh->SetAngularDamping(2.0f);
+	}
 }
 
 void AMarble::Eliminate()
 {
-	if (bIsEliminated || bHasFinished) return;
-	
-	float CrashSpeed = GetVelocity().Size() / ScaleFactor;
-	float CrashTime = 0.0f;
-	AMarbleGameMode* GM = Cast<AMarbleGameMode>(UGameplayStatics::GetGameMode(this));
-	if (GM) 
+	if (bIsEliminated || bHasFinished)
 	{
-		CrashTime = GM->GetCurrentRaceTime();
+		return;
 	}
-	else 
+	
+	const float CrashSpeed = GetVelocity().Size() / ScaleFactor;
+	float CrashTime = GetWorld()->GetTimeSeconds();
+
+	if (AMarbleGameMode* MarbleGameMode = Cast<AMarbleGameMode>(UGameplayStatics::GetGameMode(this)))
 	{
-		CrashTime = GetWorld()->GetTimeSeconds();
+		CrashTime = MarbleGameMode->GetCurrentRaceTime();
 	}
 
 	bIsEliminated = true;
 	FinalRaceTime = CrashTime;
 	FinalRaceSpeed = CrashSpeed;
-
-	UE_LOG(LogTemp, Error, TEXT("ELIMINIERT! Murmel %s | Crash-Zeit: %.2fs | Crash-Speed: %.2f cm/s"), 
-		*MarbleName, FinalRaceTime, FinalRaceSpeed);
 }

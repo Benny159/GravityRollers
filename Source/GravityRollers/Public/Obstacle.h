@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Gravity Rollers. All Rights Reserved.
+
 #pragma once
 
 #include "CoreMinimal.h"
@@ -9,7 +11,8 @@ class GRAVITYROLLERS_API AObstacle : public AActor
 {
 	GENERATED_BODY()
 	
-public:	
+public:
+	// Creatse components.
 	AObstacle();
 
     UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")

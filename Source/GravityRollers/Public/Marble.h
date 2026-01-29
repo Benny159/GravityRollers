@@ -1,169 +1,235 @@
+// Copyright (c) 2026 Gravity Rollers. All Rights Reserved.
+
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Camera/CameraComponent.h"
 #include "GameFramework/Actor.h"
 #include "PhysicalMaterials/PhysicalMaterial.h"
-#include "GameFramework/SpringArmComponent.h"
-#include "Camera/CameraComponent.h"
 #include "Marble.generated.h"
 
+class USpringArmComponent;
+class UCameraComponent;
+class UStaticMeshComponent;
+
+/**
+ * Structure containing all persistent data for a marble instance.
+ */
 USTRUCT(BlueprintType)
 struct FMarbleData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString MarbleName = "Marble";
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble Data")
+	FString MarbleName = TEXT("Marble");
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble Data")
 	float Size = 1.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble Data")
 	float Weight = 100.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble Data")
 	float SurfaceRoughness = 0.5f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble Data")
 	float MaterialDensity = 1.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble Data")
 	FVector MassDistribution = FVector::ZeroVector;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble Data")
 	float Friction = 0.5f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble Data")
 	float Restitution = 0.5f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble Data")
 	float AngularDamping = 0.5f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble Data")
 	int32 PreferredLaneIndex = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble Data")
 	int32 FinalRank = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float FinalRaceTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble Data")
+	float FinalRaceTime = 0.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float FinalRaceSpeed;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble Data")
+	float FinalRaceSpeed = 0.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble Data")
 	FLinearColor MarbleColor = FLinearColor::White;
 };
 
+/**
+ * AMarble represents the physical marble controlled in the game.
+ * It handles physics updates, selection logic, and race performance tracking.
+ */
 UCLASS()
 class GRAVITYROLLERS_API AMarble : public AActor
 {
 	GENERATED_BODY()
-	
+
 public:
+	/** Creates components and set default values. */
 	AMarble();
 
-protected:
-	virtual void BeginPlay() override;
-
-public:	
+	/**
+	 * Called every frame to update camera and selection logic.
+	 * @param DeltaTime Time elapsed since the last frame.
+	 */
 	virtual void Tick(float DeltaTime) override;
 
-	FORCEINLINE UStaticMeshComponent* GetMesh() const { return MarbleMesh; }
-
+	/**
+	 * Handles clicking interaction for selection.
+	 * @param ButtonPressed The key used for clicking.
+	 */
 	virtual void NotifyActorOnClicked(FKey ButtonPressed = EKeys::LeftMouseButton) override;
-	
-	UFUNCTION(BlueprintCallable)
-	FMarbleData GetMarbleData() const;
-	
-	UPROPERTY(BlueprintReadOnly, Category = "RaceStats")
-	int32 FinalRank = 0;
-	
-	bool bIsSelected;
-	FVector InitialLocation;
-	void UpdateSelectionVisuals(float DeltaTime);
-	void SetSelected(bool bSelected);
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float ScaleFactor = 100.f;
+	/**
+	 * Sets the selection state and updates initial location for visuals.
+	 * @param bSelected Whether the marble is currently selected.
+	 */
+	void SetSelected(bool bInSelected);
+
+	/**
+	 * Updates color and dynamic material parameters.
+	 * @param NewColor The new color to apply to the marble mesh.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Marble|Appearance")
+	void SetMarbleColor(FLinearColor NewColor);
+
+	/**
+	 * Sets up the marble based on external data.
+	 * @param Data The struct containing all configuration values.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Marble|Configuration")
+	void InitializeFromData(const FMarbleData& Data);
+
+	/**
+	 * Freezes or unfreezes physics simulation.
+	 * @param bFrozen True to disable physics, false to enable.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Marble|Race Logic")
+	void SetFrozen(bool bInFrozen);
+
+	/**
+	 * Records race finish stats and applies visual braking.
+	 * @param TimeStamp The total race time at finish.
+	 * @param FinishSpeed The velocity at the moment of crossing the line.
+	 */
+	void FinishRace(float TimeStamp, float FinishSpeed);
+
+	/**
+	 * Handles marble elimination upon crash or out-of-bounds.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Marble|Race Logic")
+	void Eliminate();
+
+	/**
+	 * Packs current variables into an FMarbleData struct.
+	 * @return A struct containing the current state of the marble.
+	 */
+	UFUNCTION(BlueprintCallable, Category = "Marble|Data")
+	FMarbleData GetMarbleData() const;
+
+	/** Returns the static mesh component. */
+	FORCEINLINE UStaticMeshComponent* GetMesh() const { return MarbleMesh; }
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FString MarbleName = "Marble";
+protected:
+	/** Set initial location and updates physic properties */
+	virtual void BeginPlay() override;
+
+	/**
+	 * Calculates and logs the current speed and race time to the DataTracker.
+	 * Called every Tick during an active race.
+	 */
+	void UpdateRaceStats();
+
+	/** Updates the physical material and mesh scale. */
+	void UpdatePhysicsProperties();
+
+	/** Creates a runtime physical material based on current attributes. */
+	UPhysicalMaterial* CreatePhysicsMaterial();
+
+	/** Smoothly interpolates selection visuals. */
+	void UpdateSelectionVisuals(float DeltaTime);
+
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Marble|Race Stats")
+	bool bHasFinished;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Marble|Race Stats")
+	bool bIsEliminated;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Marble|Race Stats")
+	int32 StartingLaneIndex;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble|Settings")
+	FString MarbleName;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* MarbleMesh;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
-	USpringArmComponent* CameraBoom;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
 	UCameraComponent* FollowCamera;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race Stats")
-	int32 StartingLaneIndex;
+	UPROPERTY(BlueprintReadOnly, Category = "Marble|Race Stats")
+	int32 FinalRank;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race Stats")
-	bool bHasFinished;
-    
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race Stats")
-	bool bIsEliminated;
+protected:
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race Stats")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Camera")
+	USpringArmComponent* CameraBoom;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Marble|Physics")
+	float ScaleFactor;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Marble|Race Stats")
 	float FinalRaceTime;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Race Stats")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Marble|Race Stats")
 	float FinalRaceSpeed;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CostumPhysics")
-	float Size = 1.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CostumPhysics")
-	float Weight = 100.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble|Physics")
+	float Size;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CostumPhysics")
-	float SurfaceRoughness = 0.5f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble|Physics")
+	float Weight;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CostumPhysics")
-	float MaterialDensity = 1.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble|Physics")
+	float SurfaceRoughness;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CostumPhysics")
-	FVector MassDistribution = FVector(0.0f, 0.0f, 0.0f);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble|Physics")
+	float MaterialDensity;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="CostumPhysics")
-	float Mass = 1.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble|Physics")
+	FVector MassDistribution;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CostumPhysics")
-	float Friction = 0.5f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Marble|Physics")
+	float Mass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CostumPhysics")
-	float Restitution = 0.5f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble|Physics")
+	float Friction;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CostumPhysics")
-	float AngularDamping = 0.5f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble|Physics")
+	float Restitution;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Appearance")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble|Physics")
+	float AngularDamping;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Marble|Appearance")
 	FLinearColor MarbleColor;
-	
-	UFUNCTION(BlueprintCallable, Category = "Appearance")
-	void SetMarbleColor(FLinearColor NewColor);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CostumPhysics")
-	TEnumAsByte<EFrictionCombineMode::Type> FrictionCombineMode = EFrictionCombineMode::Min;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble|Physics")
+	TEnumAsByte<EFrictionCombineMode::Type> FrictionCombineMode;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="CostumPhysics")
-	TEnumAsByte<EFrictionCombineMode::Type> RestitutionCombineMode = EFrictionCombineMode::Max;
-	
-	void UpdatePhysicsProperties();
-	UPhysicalMaterial* CreatePhysicsMaterial();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Marble|Physics")
+	TEnumAsByte<EFrictionCombineMode::Type> RestitutionCombineMode;
 
-	UFUNCTION(BlueprintCallable, Category="Configuration")
-	void InitializeFromData(const FMarbleData& Data);
-
-	UFUNCTION(BlueprintCallable, Category="Race Logic")
-	void SetFrozen(bool bFrozen);
-	
-	void FinishRace(float TimeStamp, float FinishSpeed);
-	
-	UFUNCTION(BlueprintCallable, Category="Race Logic")
-	void Eliminate();
+private:
+	bool bIsSelected;
+	FVector InitialLocation;
 };
