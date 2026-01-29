@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Gravity Rollers. All Rights Reserved.
+
 #include "Obstacle.h"
 
 AObstacle::AObstacle()
