@@ -73,6 +73,7 @@ class GRAVITYROLLERS_API AMarble : public AActor
 	GENERATED_BODY()
 
 public:
+	/** Creates components and set default values. */
 	AMarble();
 
 	/**
@@ -138,6 +139,7 @@ public:
 	FORCEINLINE UStaticMeshComponent* GetMesh() const { return MarbleMesh; }
 	
 protected:
+	/** Set initial location and updates physic properties */
 	virtual void BeginPlay() override;
 
 	/**
