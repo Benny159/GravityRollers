@@ -1,3 +1,5 @@
+// Copyright (c) 2026 Gravity Rollers. All Rights Reserved.
+
 #include "MarblePlayerController.h"
 #include "Kismet/GameplayStatics.h"
 #include "DataTrackerPlugin/DataTracker.h"
