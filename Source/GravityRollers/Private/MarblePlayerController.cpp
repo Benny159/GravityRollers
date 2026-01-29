@@ -156,7 +156,7 @@ void AMarblePlayerController::SwitchToAnalysView()
     AActor* AnalyseCam = FindCameraByTag(FName("AnalyseCam"));
     if (AnalyseCam)
     {
-        SetViewTargetWithBlend(AnalyseCam, SwitchTime, EViewTargetBlendFunction::VTBlend_EaseInOut, VirtualBlendTime);
+        SetViewTargetWithBlend(AnalyseCam, VirtualBlendTime, EViewTargetBlendFunction::VTBlend_EaseInOut, VirtualBlendTime);
     }
     bRaceIsActive = false;
 }
@@ -166,7 +166,7 @@ void AMarblePlayerController::SwitchToConfigView()
     AActor* ConfigCam = FindCameraByTag(FName("ConfigCam"));
     if (ConfigCam)
     {
-        SetViewTargetWithBlend(ConfigCam, SwitchTime, EViewTargetBlendFunction::VTBlend_EaseInOut, VirtualBlendTime);
+        SetViewTargetWithBlend(ConfigCam, VirtualBlendTime, EViewTargetBlendFunction::VTBlend_EaseInOut, VirtualBlendTime);
     }
     bRaceIsActive = false;
 }

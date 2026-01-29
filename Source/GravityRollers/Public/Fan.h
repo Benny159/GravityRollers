@@ -1,48 +1,74 @@
+// Copyright (c) 2026 Gravity Rollers. All Rights Reserved.
+
 #pragma once
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Marble.h"
 #include "Fan.generated.h"
 
-class AMarbleGameMode;
+// Forward declarations to reduce header dependencies
+class AMarble;
+class UArrowComponent;
+class UStaticMeshComponent;
 
+/**
+ * AFan
+ * An interactive actor that rotates and applies a directional wind force 
+ * to active marbles using a Gaussian distribution for wind variance.
+ */
 UCLASS()
 class GRAVITYROLLERS_API AFan : public AActor
 {
 	GENERATED_BODY()
 	
-public:	
+public:
+	/** Create components and set default values. */
 	AFan();
+	
+	/**
+	 * Called every frame to handle rotation and wind physics.
+	 * @param DeltaTime Time elapsed since the last frame.
+	 */
 	virtual void Tick(float DeltaTime) override;
-	virtual void BeginPlay() override;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Fan")
-	UStaticMeshComponent* BaseMesh;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Fan")
-	UStaticMeshComponent* RotorMesh;
-	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Fan")
-	class UArrowComponent* WindDirectionArrow;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wind Physics")
-	bool bFanOn = true;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wind Physics")
-	float MeanWindStrength = 1000.0f; 
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Wind Physics")
-	float WindVariance = 250.0f;
-
-	UPROPERTY(EditAnywhere, Category = "Visuals")
-	float RotationSpeed = 800.0f;
-
-	UFUNCTION(BlueprintCallable)
+	/**
+	 * Toggles the fan's active state (On/Off).
+	 */
+	UFUNCTION(BlueprintCallable, Category = "GravityRollers|Interaction")
 	void ToggleFan();
 
-	UPROPERTY()
-	TArray<AMarble*> ActiveMarbles;
+private:
+	/**
+	 * Generates a random number following a Gaussian (Normal) distribution.
+	 * Used to simulate natural wind gust variance.
+	 *  @param Mean The average value.
+	 * @param StdDev The standard deviation (spread) from the mean.
+	 * @return A randomized float value.
+	 */
+	float GetGaussianRandom(float Mean, float StdDev) const;
+
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UStaticMeshComponent* BaseMesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UStaticMeshComponent* RotorMesh;
 	
-	float GetGaussianRandom(float Mean, float StdDev);
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UArrowComponent* WindDirectionArrow;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GravityRollers|Wind Physics")
+	bool bIsFanActive;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GravityRollers|Wind Physics")
+	float MeanWindStrength;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GravityRollers|Wind Physics")
+	float WindVariance;
+
+	UPROPERTY(EditAnywhere, Category = "GravityRollers|Visuals")
+	float RotationSpeed;
+	
+	UPROPERTY(Transient)
+	TArray<AMarble*> ActiveMarbles;
 };
