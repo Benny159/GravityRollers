@@ -1,4 +1,4 @@
-# Gravity Rollers - Murmel-Simulation (Berufsschulprojekt FIAE 2025)
+# Gravity Rollers - Murmel-Simulation 
 
 Dieses Repository enthält das Unreal Engine 5 Projekt "Gravity Rollers", eine Murmel-Simulation, die im Rahmen der Projektarbeit für Fachinformatiker Anwendungsentwicklung an der Berufsschule Technik in Rostock entwickelt wird.
 
